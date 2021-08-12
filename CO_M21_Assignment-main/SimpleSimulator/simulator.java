@@ -4,6 +4,8 @@ public class simulator {
 
     public static String add(int reg1, int reg2, int reg3) {
 
+
+        
     }
 
     public static String sub(int reg1, int reg2, int reg3) {
