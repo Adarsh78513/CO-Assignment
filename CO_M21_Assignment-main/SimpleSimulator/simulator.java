@@ -2,19 +2,19 @@ import java.util.Scanner;
 
 public class simulator {
 
-    public static String add() {
+    public static String add(int reg1, int reg2, int reg3) {
 
     }
 
-    public static String sub() {
+    public static String sub(int reg1, int reg2, int reg3) {
 
     }
 
-    public static String movImm() {
+    public static String movImm(int reg1, int val) {
 
     }
 
-    public static String movReg() {
+    public static String movReg(int reg1, int reg2) {
 
     }
 
@@ -72,8 +72,11 @@ public class simulator {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        while (!in.nextLine().equals(null)) {
-            
+        String input1 = in.nextLine();
+        if (input1 != null && input1.equals("hlt")) {
+            while (!in.nextLine().equals(null)) {
+
+            }
         }
         in.close();
     }
