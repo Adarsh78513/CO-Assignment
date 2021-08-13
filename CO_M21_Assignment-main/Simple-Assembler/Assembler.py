@@ -106,14 +106,21 @@ def main():
         st = input().strip().split()
         if len(st) == 0:
             continue
+        
         elif st[0] == "hlt":
             allInsts.append(st)
             break
+        
         elif len(st) == 2 and st[1] == "hlt":
             allInsts.append(st)
             break
+        
         elif st[0] == "var":
-            varInsts.append(st)
+            if len(allInsts) == 0:
+                varInsts.append(st)
+            else:
+                raise ("Declare variable first")
+
         elif st[0] != "var":
             allInsts.append(st)
 
