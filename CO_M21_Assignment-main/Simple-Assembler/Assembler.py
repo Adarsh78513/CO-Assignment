@@ -39,8 +39,7 @@ def decToBinary(n):
     return s
 
 
-def assemblyCode(line):
-    inst = line.split()
+def assemblyCode(inst):
     # For deciding if it is immediate move or register move
     if inst[0] == "mov":
         if inst[2][1] == "R":
@@ -48,19 +47,24 @@ def assemblyCode(line):
         else:
             inst[0] = "movi"
     #
-    type = opcode[inst[0]][1]
-    op = opcode[inst[0]][0]
+    i = 0
+    if ( opcode.has_key(inst[1])):
+        i += 1
+        
+    type = opcode[inst[i]][1]
+    op = opcode[inst[i]][0]
     
+        
     if type == "A":
-        return(op + "0" * 2 + register[inst[1]] + register[inst[2]] + register[inst[3]])
+        return(op + "0" * 2 + register[inst[i + 1]] + register[inst[i + 2]] + register[inst[i + 3]])
     elif type == "B":
-        return(op + register[inst[1]] + decToBinary(int(inst[2][1::])))
+        return(op + register[inst[i + 1]] + decToBinary(int(inst[i + 2][1::])))
     elif type == "C":
-        return(op + "0" * 5 + register[inst[1]] + register[inst[2]])
+        return(op + "0" * 5 + register[inst[i + 1]] + register[inst[i + 2]])
     elif type == "D":
-        return(op + "0" * 3 + decToBinary(int(inst[1])))
+        return(op + "0" * 3 + decToBinary(int(inst[i + 1])))
     elif type == "E":
-        return(op + "0" * 3 + decToBinary(int(inst[1])))
+        return(op + "0" * 3 + decToBinary(int(inst[i + 1])))
     elif type == "F":
         return(op + "0" * 11)
     else:
@@ -70,14 +74,20 @@ def assemblyCode(line):
 def main():
     #todo
     st = input().strip()
+    allInsts = []
+    
     while(True):
-        print(assemblyCode(st))
+        allInsts.append(st.split())
         if ( st == "hlt"):
             break
         elif(len(st) == 0):
             continue
         st = input().strip()
     
+    labels  = {}
+    for i in range (len(allInsts)):
+        if ( allInsts[i][0] not in opcode):
+            labels[allInsts[i][0]] = i
     
-if __name__ == "_main_":
+if __name__ == "__main__":
     main()
