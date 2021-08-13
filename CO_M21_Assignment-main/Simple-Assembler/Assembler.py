@@ -22,15 +22,16 @@ opcode = {
 }
 
 register = {
-    "R0": "000", 
-    "R1": "001", 
-    "R2": "010", 
-    "R3": "011", 
-    "R4": "100", 
+    "R0": "000",
+    "R1": "001",
+    "R2": "010",
+    "R3": "011",
+    "R4": "100",
     "R5": "101",
-    "R6": " 110", 
+    "R6": " 110",
     "FLAGS": "111"
 }
+
 
 def decToBinary(n):
     s = bin(n)
@@ -39,7 +40,7 @@ def decToBinary(n):
     return s
 
 
-def assemblyCode(inst,labels):
+def assemblyCode(inst, labels):
     # For deciding if it is immediate move or register move
     if inst[0] == "mov":
         if inst[2][0] == "R":
@@ -48,55 +49,65 @@ def assemblyCode(inst,labels):
             inst[0] = "movi"
     #
     i = 0
-    if inst[0]!="hlt":
-        if inst[1] in opcode :
-            i += 1
-        
+    if inst[0] != "hlt" and (inst[1] in opcode):
+        i += 1
+
     type = opcode[inst[i]][1]
     op = opcode[inst[i]][0]
-    
-        
+
     if type == "A":
-        return(op + "0" * 2 + register[inst[i + 1]] + register[inst[i + 2]] + register[inst[i + 3]])
+        return op + "0" * 2 + register[inst[i + 1]] + register[inst[i + 2]] + register[inst[i + 3]]
     elif type == "B":
-        return(op + register[inst[i + 1]] + decToBinary(int(inst[i + 2][1::])))
+        return op + register[inst[i + 1]] + decToBinary(int(inst[i + 2][1::]))
     elif type == "C":
-        return(op + "0" * 5 + register[inst[i + 1]] + register[inst[i + 2]])
+        return op + "0" * 5 + register[inst[i + 1]] + register[inst[i + 2]]
     elif type == "D":
-        return(op + "0" * 3 + decToBinary(int(labels.get(inst[1]))))
+        return op + register[inst[i + 1]] + decToBinary(int(labels[inst[i + 2]]))
     elif type == "E":
-        return(op + "0" * 3 + decToBinary(int(labels.get(inst[1]))))
+        return op + "0" * 3 + decToBinary(int(labels.get(inst[1])))
     elif type == "F":
-        return(op + "0" * 11)
+        return op + "0" * 11
     else:
-        #TODO make error
+        # TODO make error
         return 0
 
+
 def main():
-    #todo
-    
+    # todo
+
+    #storing all the instructions in from of lists
     allInsts = []
-    
-    while(True):
-        st = input().strip()
-        allInsts.append(st.split())
-        if ( st == "hlt"):
+    #storing all the labels and variable
+    labels = {}
+    #storing all the var instrutions
+    varInsts = []
+
+    while True:
+        st = input().strip().split()
+        if st[0] == "hlt":
+            allInsts.append(st)
             break
-        elif(len(st) == 0):
+        elif st[0] == "var":
+            varInsts.append(st)
+        elif st[0] != "var":
+            allInsts.append(st)
+        elif len(st) == 0:
             continue
-        
-    labels  = {}
-   
-    for i in range (len(allInsts)):
-        if(allInsts[i][0]=="mov"):
+
+    for i in range(len(allInsts)):
+        if allInsts[i][0] == "mov" or allInsts[i][0] == "var":
             continue
-        if ( allInsts[i][0] not in opcode):
+        if allInsts[i][0] not in opcode:
             labels[allInsts[i][0]] = i
-    
-    for i in allInsts:
-        print(assemblyCode(i,labels))
-    
-    
-    
+
+    j = len(allInsts)
+    for i in range(len(varInsts)):
+        labels[varInsts[i][1]] = j
+        j += 1
+
+    for line in allInsts:
+        print(assemblyCode(line, labels))
+
+
 if __name__ == "__main__":
     main()
