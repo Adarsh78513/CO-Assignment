@@ -48,19 +48,36 @@ def assemblyCode(line):
         else:
             inst[0] = "movi"
     #
-    if opcode[inst[0][1]] == "A":
-        return(opcode[inst[0][0]] + "0" * 2 + register[inst[1]] + register[inst[2]] + register[inst[3]])
-    elif opcode[inst[0][1]] == "B":
-        return(opcode[inst[0][0]] + register[inst[1]] + decToBinary(int(inst[2][1::])))
-    elif opcode[inst[0][1]] == "C":
-        return(opcode[inst[0][0]] + "0" * 5 + register[inst[1]] + register[inst[2]])
-    elif opcode[inst[0][1]] == "D":
-        return(opcode[inst[0][0]] + "0" * 3 + decToBinary(int(inst[1])))
-    elif opcode[inst[0][1]] == "E":
-        return(opcode[inst[0][0]] + "0" * 3 + decToBinary(int(inst[1])))
-    elif opcode[inst[0][1]] == "F":
-        return(opcode[inst[0][0]] + "0" * 11)
+    type = opcode[inst[0]][1]
+    op = opcode[inst[0]][0]
+    
+    if type == "A":
+        return(op + "0" * 2 + register[inst[1]] + register[inst[2]] + register[inst[3]])
+    elif type == "B":
+        return(op + register[inst[1]] + decToBinary(int(inst[2][1::])))
+    elif type == "C":
+        return(op + "0" * 5 + register[inst[1]] + register[inst[2]])
+    elif type == "D":
+        return(op + "0" * 3 + decToBinary(int(inst[1])))
+    elif type == "E":
+        return(op + "0" * 3 + decToBinary(int(inst[1])))
+    elif type == "F":
+        return(op + "0" * 11)
+    else:
+        #TODO make error
+        return 0
 
-
-# st = input("code:  ")
-# assemblyCode(st)
+def main():
+    #todo
+    st = input().strip()
+    while(True):
+        print(assemblyCode(st))
+        if ( st == "hlt"):
+            break
+        elif(len(st) == 0):
+            continue
+        st = input().strip()
+    
+    
+if __name__ == "__main__":
+    main()
