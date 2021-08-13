@@ -32,7 +32,7 @@ def assemblyCode(line):
     if types[inst[0]] == "A":
         return(opcode[inst[0]] + "0" * 2 + register[inst[1]] + register[inst[2]] + register[inst[3]])
     elif types[inst[0]] == "B":
-        return(opcode[inst[0]] + register[inst[1]] + decToBinary(int(inst[2])))
+        return(opcode[inst[0]] + register[inst[1]] + decToBinary(int(inst[2][1::])))
     elif types[inst[0]] == "C":
         return(opcode[inst[0]] + "0" * 5 + register[inst[1]] + register[inst[2]])
     elif types[inst[0]] == "D":
