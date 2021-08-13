@@ -39,7 +39,7 @@ def decToBinary(n):
     return s
 
 
-def assemblyCode(inst):
+def assemblyCode(inst, labels):
     # For deciding if it is immediate move or register move
     if inst[0] == "mov":
         if inst[2][1] == "R":
@@ -62,9 +62,9 @@ def assemblyCode(inst):
     elif type == "C":
         return(op + "0" * 5 + register[inst[i + 1]] + register[inst[i + 2]])
     elif type == "D":
-        return(op + "0" * 3 + decToBinary(int(inst[i + 1])))
+        return(op + "0" * 3 + decToBinary(int(labels.get(inst[1]))))
     elif type == "E":
-        return(op + "0" * 3 + decToBinary(int(inst[i + 1])))
+        return(op + "0" * 3 + decToBinary(int(labels.get(inst[1]))))
     elif type == "F":
         return(op + "0" * 11)
     else:
