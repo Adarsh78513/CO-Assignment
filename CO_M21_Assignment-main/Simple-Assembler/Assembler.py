@@ -27,7 +27,6 @@ def assemblyCode(line):
             inst[0] = "movr"
         else:
             inst[0] = "movi"
-
     #
     if types[inst[0]] == "A":
         return(opcode[inst[0]] + "0" * 2 + register[inst[1]] + register[inst[2]] + register[inst[3]])
