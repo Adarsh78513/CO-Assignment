@@ -50,14 +50,19 @@ def assemblyCode(line):
     #
     if opcode[inst[0][1]] == "A":
         return(opcode[inst[0][0]] + "0" * 2 + register[inst[1]] + register[inst[2]] + register[inst[3]])
+
     elif opcode[inst[0][1]] == "B":
         return(opcode[inst[0][0]] + register[inst[1]] + decToBinary(int(inst[2][1::])))
+
     elif opcode[inst[0][1]] == "C":
         return(opcode[inst[0][0]] + "0" * 5 + register[inst[1]] + register[inst[2]])
+
     elif opcode[inst[0][1]] == "D":
         return(opcode[inst[0][0]] + "0" * 3 + decToBinary(int(inst[1])))
+    
     elif opcode[inst[0][1]] == "E":
         return(opcode[inst[0][0]] + "0" * 3 + decToBinary(int(inst[1])))
+    
     elif opcode[inst[0][1]] == "F":
         return(opcode[inst[0][0]] + "0" * 11)
 
