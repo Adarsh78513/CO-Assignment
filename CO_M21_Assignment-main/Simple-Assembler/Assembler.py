@@ -43,7 +43,7 @@ def decToBinary(n):
 def assemblyCode(inst, labels):
     # For deciding if it is immediate move or register move
     if inst[0] == "mov":
-        if inst[2][0] == "R":
+        if inst[2][0] == "R" or inst[2] == "FLAGS":
             inst[0] = "movr"
         else:
             inst[0] = "movi"
@@ -75,24 +75,24 @@ def assemblyCode(inst, labels):
 def main():
     # todo
 
-    #storing all the instructions in from of lists
+    # storing all the instructions in from of lists
     allInsts = []
-    #storing all the labels and variable
+    # storing all the labels and variable
     labels = {}
-    #storing all the var instrutions
+    # storing all the var instructions
     varInsts = []
 
     while True:
         st = input().strip().split()
-        if st[0] == "hlt":
+        if len(st) == 0:
+            continue
+        elif st[0] == "hlt":
             allInsts.append(st)
             break
         elif st[0] == "var":
             varInsts.append(st)
         elif st[0] != "var":
             allInsts.append(st)
-        elif len(st) == 0:
-            continue
 
     for i in range(len(allInsts)):
         if allInsts[i][0] == "mov" or allInsts[i][0] == "var":
