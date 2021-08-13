@@ -64,7 +64,7 @@ def assemblyCode(inst, labels):
     elif type == "D":
         return op + register[inst[i + 1]] + decToBinary(int(labels[inst[i + 2]]))
     elif type == "E":
-        return op + "0" * 3 + decToBinary(int(labels.get(inst[1])))
+        return op + "0" * 3 + decToBinary(int(labels[inst[i + 1]]))
     elif type == "F":
         return op + "0" * 11
     else:
@@ -89,16 +89,19 @@ def main():
         elif st[0] == "hlt":
             allInsts.append(st)
             break
+        elif len(st) == 2 and st[1] == "hlt":
+            allInsts.append(st)
+            break
         elif st[0] == "var":
             varInsts.append(st)
         elif st[0] != "var":
             allInsts.append(st)
 
     for i in range(len(allInsts)):
-        if allInsts[i][0] == "mov" or allInsts[i][0] == "var":
+        if allInsts[i][0] == "mov":
             continue
         if allInsts[i][0] not in opcode:
-            labels[allInsts[i][0]] = i
+            labels[allInsts[i][0][0:-1]] = i
 
     j = len(allInsts)
     for i in range(len(varInsts)):
