@@ -49,6 +49,8 @@ def assemblyCode(inst, labels):
             inst[0] = "movi"
     #
     i = 0
+    if inst[0] in labels:
+        i += 1
     if inst[0] != "hlt" and (inst[1] in opcode):
         i += 1
     
@@ -58,35 +60,53 @@ def assemblyCode(inst, labels):
     op = opcode[inst[i]][0]
 
     if type == "A":
+        if len(inst) != 4:
+            raise "wrong syntax"
         for j in range(1, 4):
             if ( inst[i + j] not in register):
                 raise "Invalid register"
         return op + "0" * 2 + register[inst[i + 1]] + register[inst[i + 2]] + register[inst[i + 3]]
+    
     elif type == "B":
+        if len(inst) != 3:
+            raise "wrong syntax"
         for j in range(1, 2):
             if ( inst[i + j] not in register):
                 raise "Invalid register"
         if  255 < int(inst[i + 2][1::]) < 0:
             raise "Invalid immediate value"
         return op + register[inst[i + 1]] + decToBinary(int(inst[i + 2][1::]))
+    
     elif type == "C":
+        if len(inst) != 3:
+            raise "wrong syntax"
         for j in range(1, 3):
             if ( inst[i + j] not in register):
                 raise "Invalid register"
         return op + "0" * 5 + register[inst[i + 1]] + register[inst[i + 2]]
+    
     elif type == "D":
+        if len(inst) != 3:
+            raise "wrong syntax"
         for j in range(1, 2):
             if ( inst[i + j] not in register):
                 raise "Invalid register"
         if ( inst[i + 2] not in labels):
             raise "Use of undefined label"
         return op + register[inst[i + 1]] + decToBinary(int(labels[inst[i + 2]]))
+    
     elif type == "E":
+        if len(inst) != 2:
+            raise "wrong syntax"
         if ( inst[i + 2] not in labels):
             raise "Use of undefined label"
         return op + "0" * 3 + decToBinary(int(labels[inst[i + 1]]))
+    
     elif type == "F":
+        if len(inst) != 1:
+            raise "wrong syntax"
         return op + "0" * 11
+    
     else:
         # TODO make error
         return 0
@@ -104,13 +124,14 @@ def main():
 
     while True:
         st = input().strip().split()
+        # empty line
         if len(st) == 0:
             continue
         # break on halt
         elif st[0] == "hlt":
             allInsts.append(st)
             break
-        #break on halt( label at index 1)
+        # break on halt( label at index 1)
         elif len(st) == 2 and st[1] == "hlt":
             allInsts.append(st)
             break
