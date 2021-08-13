@@ -39,17 +39,18 @@ def decToBinary(n):
     return s
 
 
-def assemblyCode(inst, labels):
+def assemblyCode(inst,labels):
     # For deciding if it is immediate move or register move
     if inst[0] == "mov":
-        if inst[2][1] == "R":
+        if inst[2][0] == "R":
             inst[0] = "movr"
         else:
             inst[0] = "movi"
     #
     i = 0
-    if ( opcode.has_key(inst[1])):
-        i += 1
+    if inst[0]!="hlt":
+        if inst[1] in opcode :
+            i += 1
         
     type = opcode[inst[i]][1]
     op = opcode[inst[i]][0]
@@ -73,21 +74,29 @@ def assemblyCode(inst, labels):
 
 def main():
     #todo
-    st = input().strip()
+    
     allInsts = []
     
     while(True):
+        st = input().strip()
         allInsts.append(st.split())
         if ( st == "hlt"):
             break
         elif(len(st) == 0):
             continue
-        st = input().strip()
-    
+        
     labels  = {}
+   
     for i in range (len(allInsts)):
+        if(allInsts[i][0]=="mov"):
+            continue
         if ( allInsts[i][0] not in opcode):
             labels[allInsts[i][0]] = i
+    
+    for i in allInsts:
+        print(assemblyCode(i,labels))
+    
+    
     
 if __name__ == "__main__":
     main()
