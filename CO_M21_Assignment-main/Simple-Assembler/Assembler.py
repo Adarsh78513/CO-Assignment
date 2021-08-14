@@ -40,14 +40,14 @@ def decToBinary(n):
     return s
 
 
-def assemblyCode(inst, labels):
+def assemblyCode(inst, labels, varIdx):
     if inst[-1] == "FLAGS" and inst[-3] != "mov":
         raise "illegal use of FLAGS"
 
     i = 0
     if inst[0] != "hlt" and (inst[1] in opcode):
         i += 1
-        
+
     # For deciding if it is immediate move or register move
     if inst[i] == "mov":
         if inst[i + 2][0] == "R" or inst[i + 2] == "FLAGS":
@@ -55,7 +55,7 @@ def assemblyCode(inst, labels):
         else:
             inst[i] = "movi"
 
-    if ( inst[i] not in opcode):
+    if (inst[i] not in opcode):
         raise "invalid instruction name"
 
     type = opcode[inst[i]][1]
@@ -85,11 +85,15 @@ def assemblyCode(inst, labels):
         for j in range(1, 2):
             if inst[i + j] not in register:
                 raise "Invalid register"
-        if inst[i + 2] not in labels:
-            raise "Use of undefined label"
-        return op + register[inst[i + 1]] + decToBinary(int(labels[inst[i + 2]]))
+        if inst[i + 2] in labels:
+            raise "Misuse of label as variable"
+        if inst[i + 2] not in varIdx:
+            raise "Use of undefined variable"
+        return op + register[inst[i + 1]] + decToBinary(int(varIdx[inst[i + 2]]))
 
     elif type == "E":
+        if inst[i + 1] in varIdx:
+            raise "Misuse of variable as label"
         if inst[i + 1] not in labels:
             raise "Use of undefined label"
         return op + "0" * 3 + decToBinary(int(labels[inst[i + 1]]))
@@ -111,6 +115,8 @@ def main():
     labels = {}
     # storing all the var instructions
     varInsts = []
+
+    varIdx = {}
 
     while True:
         st = input().strip().split()
@@ -146,11 +152,11 @@ def main():
 
     j = len(allInsts)
     for i in range(len(varInsts)):
-        labels[varInsts[i][1]] = j
+        varIdx[varInsts[i][1]] = j
         j += 1
 
     for line in allInsts:
-        print(assemblyCode(line, labels))
+        print(assemblyCode(line, labels, varIdx))
 
 
 if __name__ == "__main__":
