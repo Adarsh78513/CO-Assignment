@@ -41,14 +41,22 @@ def decToBinary(n):
 
 
 def assemblyCode(inst, labels):
+    
     if inst[-1] == "FLAGS" and inst[-3] != "mov":
         raise "illegal use of FLAGS"
+
     # For deciding if it is immediate move or register move
     if inst[0] == "mov":
         if inst[2][0] == "R" or inst[2] == "FLAGS":
             inst[0] = "movr"
         else:
             inst[0] = "movi"
+
+    elif inst[1] == "mov":
+        if inst[3][0] == "R" or inst[3] == "FLAGS":
+            inst[1] = "movr"
+        else:
+            inst[1] = "movi"
     #
     i = 0
     if inst[0] != "hlt" and (inst[1] in opcode):
@@ -56,6 +64,7 @@ def assemblyCode(inst, labels):
     
     if ( opcode[inst[i][0]]):
         raise "invalid instruction name"
+    
     type = opcode[inst[i]][1]
     op = opcode[inst[i]][0]
 
@@ -88,7 +97,7 @@ def assemblyCode(inst, labels):
         return op + register[inst[i + 1]] + decToBinary(int(labels[inst[i + 2]]))
     
     elif type == "E":
-        if ( inst[i + 2] not in labels):
+        if ( inst[i + 1] not in labels):
             raise "Use of undefined label"
         return op + "0" * 3 + decToBinary(int(labels[inst[i + 1]]))
     
