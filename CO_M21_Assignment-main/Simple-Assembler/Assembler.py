@@ -41,6 +41,8 @@ def decToBinary(n):
 
 
 def assemblyCode(inst, labels):
+    if inst[-1] == "FLAGS" and inst[-3] != "mov":
+        raise "illegal use of FLAGS"
     # For deciding if it is immediate move or register move
     if inst[0] == "mov":
         if inst[2][0] == "R" or inst[2] == "FLAGS":
