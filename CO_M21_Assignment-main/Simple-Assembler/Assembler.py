@@ -137,7 +137,7 @@ def main():
             if len(allInsts) == 0:
                 varInsts.append(st)
             else:
-                raise ("Declare variable first")
+                raise "Declare variable first"
         # adding instructions
         elif st[0] != "var":
             allInsts.append(st)
@@ -146,7 +146,10 @@ def main():
         if allInsts[i][0] == "mov":
             continue
         if allInsts[i][0] not in opcode:
-            labels[allInsts[i][0][0:-1]] = i
+            if allInsts[i][0][-1] == ":":
+                labels[allInsts[i][0][0:-1]] = i
+            else:
+                raise "wrong syntax"
 
     j = len(allInsts)
     for i in range(len(varInsts)):
