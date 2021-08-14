@@ -44,25 +44,19 @@ def assemblyCode(inst, labels):
     if inst[-1] == "FLAGS" and inst[-3] != "mov":
         raise "illegal use of FLAGS"
 
-    # For deciding if it is immediate move or register move
-    if inst[0] == "mov":
-        if inst[2][0] == "R" or inst[2] == "FLAGS":
-            inst[0] = "movr"
-        else:
-            inst[0] = "movi"
-
-    # elif inst[1] == "mov":
-    #     if inst[3][0] == "R" or inst[3] == "FLAGS":
-    #         inst[1] = "movr"
-    #     else:
-    #         inst[1] = "movi"
-    #
     i = 0
     if inst[0] != "hlt" and (inst[1] in opcode):
         i += 1
+        
+    # For deciding if it is immediate move or register move
+    if inst[i] == "mov":
+        if inst[i + 2][0] == "R" or inst[i + 2] == "FLAGS":
+            inst[i] = "movr"
+        else:
+            inst[i] = "movi"
 
-    # if ( opcode[inst[i][0]]):
-    #     raise "invalid instruction name"
+    if ( inst[i] not in opcode):
+        raise "invalid instruction name"
 
     type = opcode[inst[i]][1]
     op = opcode[inst[i]][0]
