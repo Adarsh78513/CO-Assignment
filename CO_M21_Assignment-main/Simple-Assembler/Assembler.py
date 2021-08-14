@@ -146,7 +146,7 @@ def main():
         if allInsts[i][0] == "mov":
             continue
         if allInsts[i][0] not in opcode:
-            if allInsts[i][0][-1] == ":":
+            if allInsts[i][0][len(allInsts[i][0])-1] == ":":
                 labels[allInsts[i][0][0:-1]] = i
             else:
                 raise "wrong syntax"
