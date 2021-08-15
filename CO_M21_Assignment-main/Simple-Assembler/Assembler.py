@@ -42,7 +42,8 @@ def decToBinary(n):
 
 def assemblyCode(inst, labels, varIdx):
     if inst[-1] == "FLAGS" and inst[-3] != "mov":
-        raise "illegal use of FLAGS"
+        print("illegal use of FLAGS")
+        exit()
 
     i = 0
     if inst[0] != "hlt" and (inst[1] in opcode):
@@ -56,66 +57,86 @@ def assemblyCode(inst, labels, varIdx):
             inst[i] = "movi"
 
     if (inst[i] not in opcode):
-        raise "invalid instruction name"
+        print("invalid instruction name")
+        exit()
 
     type = opcode[inst[i]][1]
     op = opcode[inst[i]][0]
 
     if type == "A":
         if len(inst) != i + 4:
-            raise "Wrong Syntax"
+            print("Wrong Syntax")
+            exit()
         
         for j in range(1, 4):
             if inst[i + j] not in register:
-                raise "Invalid register"
+                print("Invalid register")
+                exit()
         return op + "0" * 2 + register[inst[i + 1]] + register[inst[i + 2]] + register[inst[i + 3]]
 
     elif type == "B":
         if len(inst) != i + 3:
-            raise "Wrong Syntax"
+            print("Wrong Syntax")
+            exit()
         
         for j in range(1, 2):
             if inst[i + j] not in register:
-                raise "Invalid register"
+                print("Invalid register")
+                exit()
+                
         if 255 < int(inst[i + 2][1::]) < 0:
-            raise "Invalid immediate value"
+            print("Invalid immediate value")
+            exit()
+            
         return op + register[inst[i + 1]] + decToBinary(int(inst[i + 2][1::]))
 
     elif type == "C":
         if len(inst) != i + 3:
-            raise "Wrong Syntax"
+            print("Wrong Syntax")
+            exit()
         
         for j in range(1, 3):
             if inst[i + j] not in register:
-                raise "Invalid register"
+                print("Invalid register")
+                exit()
+                
         return op + "0" * 5 + register[inst[i + 1]] + register[inst[i + 2]]
 
     elif type == "D":
         if len(inst) != i + 3:
-            raise "Wrong Syntax"
+            print("Wrong Syntax")
+            exit()
         
         for j in range(1, 2):
             if inst[i + j] not in register:
-                raise "Invalid register"
+                print("Invalid register")
+                exit()
+                
         if inst[i + 2] in labels:
-            raise "Misuse of label as variable"
+            print("Misuse of label as variable")
+            exit()
         if inst[i + 2] not in varIdx:
-            raise "Use of undefined variable"
+            print("Use of undefined variable")
+            exit()
         return op + register[inst[i + 1]] + decToBinary(int(varIdx[inst[i + 2]]))
 
     elif type == "E":
         if len(inst) != i + 2:
-            raise "Wrong Syntax"
+            print("Wrong Syntax")
+            exit()
         
         if inst[i + 1] in varIdx:
-            raise "Misuse of variable as label"
+            print("Misuse of variable as label")
+            exit()
         if inst[i + 1] not in labels:
-            raise "Use of undefined label"
+            print("Use of undefined label")
+            exit()
         return op + "0" * 3 + decToBinary(int(labels[inst[i + 1]]))
 
     elif type == "F":
         if len(inst) != i + 1:
-            raise "Wrong Syntax"
+            print("Wrong Syntax")
+            exit()
         
         return op + "0" * 11
 
@@ -136,39 +157,25 @@ def main():
 
     varIdx = {}
     
-    crap = []
-    file=open("CO_M21_Assignment-main/Simple-Assembler/main1.json","r")
+    answer = []
     
-    for line in file.readlines():
-        crap.append(line.split())
-        
-    for st in crap:
-        # empty line
-        if len(st) == 0:
-            continue
-        # break on halt
-        elif st[0] == "hlt":
-            allInsts.append(st)
-            break
-        # break on halt( label at index 1)
-        elif len(st) == 2 and st[1] == "hlt":
-            allInsts.append(st)
-            break
-        # adding variable instruction
-        elif st[0] == "var":
-            if len(allInsts) == 0:
-                if st in varInsts:
-                    raise "same variable used again"
-                else:    
-                    varInsts.append(st)
-            else:
-                raise "Declare variable first"
-        # adding instructions
-        elif st[0] != "var":
-            allInsts.append(st)
+    # crap = []
+    
+    # with open('CO_M21_Assignment-main/automatedTesting/tests/hardBin', 'r') as read_files:
+    #     file_lines = read_files.readlines()
+    #     # print the length of the lines from the input file
+    #     print(len(file_lines), "files added")
 
-    # while True:
-    #     st = input().strip().split()
+    #     # do stuff per line (which in your case is a file name)
+    #     for file_name in file_lines:
+    #         print(file_name.strip())
+            
+    # # file=open("CO_M21_Assignment-main/automatedTesting/tests/hardBin","r")
+    
+    # # for line in file.readlines():
+    # #     crap.append(line.split())
+        
+    # for st in crap:
     #     # empty line
     #     if len(st) == 0:
     #         continue
@@ -193,6 +200,36 @@ def main():
     #     elif st[0] != "var":
     #         allInsts.append(st)
 
+    while True:
+        st = input().strip().split()
+        # empty line
+        if len(st) == 0:
+            continue
+        # break on halt
+        elif st[0] == "hlt":
+            allInsts.append(st)
+            break
+        # break on halt( label at index 1)
+        elif len(st) == 2 and st[1] == "hlt":
+            allInsts.append(st)
+            break
+        # adding variable instruction
+        elif st[0] == "var":
+            if len(allInsts) == 0:
+                if st in varInsts:
+                    print("same variable used again")
+                    exit()
+                    
+                else:    
+                    varInsts.append(st)
+            else:
+                print("Declare variable first")
+                exit()
+            
+        # adding instructions
+        elif st[0] != "var":
+            allInsts.append(st)
+
     for i in range(len(allInsts)):
         if allInsts[i][0] == "mov":
             continue
@@ -200,7 +237,8 @@ def main():
             if allInsts[i][0][-1] == ":":
                 labels[allInsts[i][0][0:-1]] = i
             else:
-                raise "wrong syntax"
+                print("wrong syntax")
+                exit()
 
     j = len(allInsts)
     for i in range(len(varInsts)):
@@ -208,8 +246,10 @@ def main():
         j += 1
 
     for line in allInsts:
-        print(assemblyCode(line, labels, varIdx))
+        answer.append(assemblyCode(line, labels, varIdx))
 
+    for i in answer:
+        print(i)
 
 if __name__ == "__main__":
     main()
