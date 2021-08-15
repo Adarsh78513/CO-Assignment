@@ -206,15 +206,6 @@ def main():
             # empty line
             if len(st) == 0:
                 break
-            # break on halt
-            # elif st[0] == "hlt":
-            #     allInsts.append(st)
-            #     break
-            # # break on halt( label at index 1)
-            # elif len(st) == 2 and st[1] == "hlt":
-            #     allInsts.append(st)
-            #     break
-            # adding variable instruction
             elif st[0] == "var":
                 if len(allInsts) == 0:
                     if st in varInsts:
@@ -231,7 +222,7 @@ def main():
             elif st[0] != "var":
                 allInsts.append(st)
         except EOFError:
-            pass        
+            break       
 
     for i in range(len(allInsts)):
         if allInsts[i][0] == "mov":
@@ -247,6 +238,15 @@ def main():
     for i in range(len(varInsts)):
         varIdx[varInsts[i][1]] = j
         j += 1
+
+    for i in range (len(allInsts)-1):
+        if allInsts[i][0] == "hlt":
+            print("hlt not being used as the last instruction")
+            exit()
+
+    if allInsts[-1][0] != "hlt" and (allInsts[-1][1] != "hlt" and allInsts[-1][0][0:-1] in labels):
+        print("missing hlt instruction in the end")
+        exit()
 
     for line in allInsts:
         answer.append(assemblyCode(line, labels, varIdx))
