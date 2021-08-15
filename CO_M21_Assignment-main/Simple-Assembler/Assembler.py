@@ -71,7 +71,6 @@ def assemblyCode(inst, labels, varIdx):
         return op + "0" * 2 + register[inst[i + 1]] + register[inst[i + 2]] + register[inst[i + 3]]
 
     elif type == "B":
-        
         if len(inst) != i + 3:
             raise "Wrong Syntax"
         
@@ -83,7 +82,6 @@ def assemblyCode(inst, labels, varIdx):
         return op + register[inst[i + 1]] + decToBinary(int(inst[i + 2][1::]))
 
     elif type == "C":
-        
         if len(inst) != i + 3:
             raise "Wrong Syntax"
         
@@ -93,8 +91,6 @@ def assemblyCode(inst, labels, varIdx):
         return op + "0" * 5 + register[inst[i + 1]] + register[inst[i + 2]]
 
     elif type == "D":
-        
-        
         if len(inst) != i + 3:
             raise "Wrong Syntax"
         
@@ -108,8 +104,6 @@ def assemblyCode(inst, labels, varIdx):
         return op + register[inst[i + 1]] + decToBinary(int(varIdx[inst[i + 2]]))
 
     elif type == "E":
-        
-        
         if len(inst) != i + 2:
             raise "Wrong Syntax"
         
@@ -120,8 +114,6 @@ def assemblyCode(inst, labels, varIdx):
         return op + "0" * 3 + decToBinary(int(labels[inst[i + 1]]))
 
     elif type == "F":
-        
-        
         if len(inst) != i + 1:
             raise "Wrong Syntax"
         
@@ -160,7 +152,10 @@ def main():
         # adding variable instruction
         elif st[0] == "var":
             if len(allInsts) == 0:
-                varInsts.append(st)
+                if st in varInsts:
+                    raise "same variable used again"
+                else:    
+                    varInsts.append(st)
             else:
                 raise "Declare variable first"
         # adding instructions
