@@ -141,69 +141,24 @@ def assemblyCode(inst, labels, varIdx):
         return op + "0" * 11
 
     else:
-        # TODO make error
         return 0
 
 
 def main():
-    # todo
-
     # storing all the instructions in from of lists
     allInsts = []
     # storing all the labels and variable
     labels = {}
     # storing all the var instructions
     varInsts = []
-
+    # storing all the var index
     varIdx = {}
-    
-    answer = []
-    
-    # crap = []
-    
-    # with open('CO_M21_Assignment-main/automatedTesting/tests/hardBin', 'r') as read_files:
-    #     file_lines = read_files.readlines()
-    #     # print the length of the lines from the input file
-    #     print(len(file_lines), "files added")
-
-    #     # do stuff per line (which in your case is a file name)
-    #     for file_name in file_lines:
-    #         print(file_name.strip())
-            
-    # # file=open("CO_M21_Assignment-main/automatedTesting/tests/hardBin","r")
-    
-    # # for line in file.readlines():
-    # #     crap.append(line.split())
-        
-    # for st in crap:
-    #     # empty line
-    #     if len(st) == 0:
-    #         continue
-    #     # break on halt
-    #     elif st[0] == "hlt":
-    #         allInsts.append(st)
-    #         break
-    #     # break on halt( label at index 1)
-    #     elif len(st) == 2 and st[1] == "hlt":
-    #         allInsts.append(st)
-    #         break
-    #     # adding variable instruction
-    #     elif st[0] == "var":
-    #         if len(allInsts) == 0:
-    #             if st in varInsts:
-    #                 raise "same variable used again"
-    #             else:    
-    #                 varInsts.append(st)
-    #         else:
-    #             raise "Declare variable first"
-    #     # adding instructions
-    #     elif st[0] != "var":
-    #         allInsts.append(st)
+    # storing all the answers
+    answer = []  
 
     while True:
         try:
             st = input().strip().split()
-            # empty line
             if len(st) == 0:
                 break
             elif st[0] == "var":
