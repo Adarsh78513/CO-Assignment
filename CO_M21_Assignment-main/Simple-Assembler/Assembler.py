@@ -135,9 +135,14 @@ def main():
     varInsts = []
 
     varIdx = {}
-
-    while True:
-        st = input().strip().split()
+    
+    crap = []
+    file=open("CO_M21_Assignment-main/Simple-Assembler/main1.json","r")
+    
+    for line in file.readlines():
+        crap.append(line.split())
+        
+    for st in crap:
         # empty line
         if len(st) == 0:
             continue
@@ -161,6 +166,32 @@ def main():
         # adding instructions
         elif st[0] != "var":
             allInsts.append(st)
+
+    # while True:
+    #     st = input().strip().split()
+    #     # empty line
+    #     if len(st) == 0:
+    #         continue
+    #     # break on halt
+    #     elif st[0] == "hlt":
+    #         allInsts.append(st)
+    #         break
+    #     # break on halt( label at index 1)
+    #     elif len(st) == 2 and st[1] == "hlt":
+    #         allInsts.append(st)
+    #         break
+    #     # adding variable instruction
+    #     elif st[0] == "var":
+    #         if len(allInsts) == 0:
+    #             if st in varInsts:
+    #                 raise "same variable used again"
+    #             else:    
+    #                 varInsts.append(st)
+    #         else:
+    #             raise "Declare variable first"
+    #     # adding instructions
+    #     elif st[0] != "var":
+    #         allInsts.append(st)
 
     for i in range(len(allInsts)):
         if allInsts[i][0] == "mov":
