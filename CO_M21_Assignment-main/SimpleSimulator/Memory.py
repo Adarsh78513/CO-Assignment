@@ -1,7 +1,10 @@
 instList = []
-i = input()
-while len(i) != 0:
-    instList.append(i)
+
+while True:
+    temp = input()
+    if len(temp) == 0:
+        break
+    instList.append(temp)
 
 
 class Memory:
@@ -17,8 +20,8 @@ class Memory:
         for index in range(len(self.instList)):
             mem[index] = self.instList[index]
 
-    def get(self, line):
-        return self.mem[int(line)]
+    def get(self, index, cycle):
+        return self.mem[int(index)]
 
     def dump(self):
         for k in self.mem:

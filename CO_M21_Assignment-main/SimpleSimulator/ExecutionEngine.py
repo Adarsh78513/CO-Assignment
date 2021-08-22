@@ -89,6 +89,8 @@ class ExecutionEngine:
 
     def execute(self, inst, cycle):
 
+        newPc = cycle
+
         if type(inst) == "A":
 
             if self.fun(inst) == "add":
@@ -99,34 +101,29 @@ class ExecutionEngine:
                 self.reg.set(self.reg(inst[7, 10]), decToBinary16(n))
 
             elif self.fun(inst) == "sub":
-                n = binToDec(self.reg.get(self.reg(inst[10, 13]))) - binToDec(
-                    self.reg.get(self.reg(inst[13, 16])))
+                n = binToDec(self.reg.get(self.reg(inst[10, 13]))) - binToDec(self.reg.get(self.reg(inst[13, 16])))
                 if n < 0:
                     n = 0
                     self.reg.setOverFlow()
                 self.reg.set(self.reg(inst[7, 10]), decToBinary16(n))
 
             elif self.fun(inst) == "mul":
-                n = binToDec(self.reg.get(self.reg(inst[10, 13]))) * binToDec(
-                    self.reg.get(self.reg(inst[13, 16])))
+                n = binToDec(self.reg.get(self.reg(inst[10, 13]))) * binToDec(self.reg.get(self.reg(inst[13, 16])))
                 if n > 65535:
                     n = 0
                     self.reg.setOverFlow()
                 self.reg.set(self.reg(inst[7, 10]), decToBinary16(n))
 
             elif self.fun(inst) == "xor":
-                n = binToDec(self.reg.get(self.reg(inst[10, 13])) ^ binToDec(
-                    self.reg.get(self.reg(inst[13, 16]))))
+                n = binToDec(self.reg.get(self.reg(inst[10, 13])) ^ binToDec(self.reg.get(self.reg(inst[13, 16]))))
                 self.reg.set(self.reg(inst[7, 10]), decToBinary16(n))
 
             elif self.fun(inst) == "or":
-                n = binToDec(self.reg.get(self.reg(inst[10, 13])) | binToDec(
-                    self.reg.get(self.reg(inst[13, 16]))))
+                n = binToDec(self.reg.get(self.reg(inst[10, 13])) | binToDec(self.reg.get(self.reg(inst[13, 16]))))
                 self.reg.set(self.reg(inst[7, 10]), decToBinary16(n))
 
             elif self.fun(inst) == "or":
-                n = binToDec(self.reg.get(self.reg(inst[10, 13])) & binToDec(
-                    self.reg.get(self.reg(inst[13, 16]))))
+                n = binToDec(self.reg.get(self.reg(inst[10, 13])) & binToDec(self.reg.get(self.reg(inst[13, 16]))))
                 self.reg.set(self.reg(inst[7, 10]), decToBinary16(n))
 
         elif type(inst) == "B":
@@ -135,10 +132,12 @@ class ExecutionEngine:
 
             elif self.fun(inst) == "rs":
                 n = self.reg.get(self.reg(inst[5, 8])) >> decToBinary16(inst[8, 16])
+
                 self.reg.set(self.reg(inst[5, 8]), decToBinary16(inst[8, 16]))
 
             elif self.fun(inst) == "ls":
                 n = self.reg.get(self.reg(inst[5, 8])) << decToBinary16(inst[8, 16])
+
                 self.reg.set(self.reg(inst[5, 8]), decToBinary16(inst[8, 16]))
 
         elif type(inst) == "C":
@@ -155,10 +154,9 @@ class ExecutionEngine:
                 self.reg.setFlag(n1, n2)
 
             elif self.fun(inst) == "div":
-                quotient = self.reg.get(self.reg(inst[10, 13])) // self.reg.get(
-                    self.reg(inst[13, 16]))
-                remainder = self.reg.get(self.reg(inst[10, 13])) % self.reg.get(
-                    self.reg(inst[13, 16]))
+                quotient = self.reg.get(self.reg(inst[10, 13])) // self.reg.get(self.reg(inst[13, 16]))
+                remainder = self.reg.get(self.reg(inst[10, 13])) % self.reg.get(self.reg(inst[13, 16]))
+
                 self.reg.set("R0", decToBinary16(quotient))
                 self.reg.set("R1", decToBinary16(remainder))
 
@@ -173,37 +171,25 @@ class ExecutionEngine:
 
         elif type(inst) == "E":
             if self.fun(inst) == "jmp":
-                ProgramCounter.update(inst[8, 16])
+                newPc = inst[8, 16]
 
             elif self.fun(inst) == "jlt":
                 if self.reg.get("FLAGS")[-3] == "1":
-                    ProgramCounter.update(inst[8, 16])
+                    newPc = inst[8, 16]
 
             elif self.fun(inst) == "jgt":
                 if self.reg.get("FLAGS")[-2] == "1":
-                    ProgramCounter.update(inst[8, 16])
+                    newPc = inst[8, 16]
 
             elif self.fun(inst) == "je":
                 if self.reg.get("FLAGS")[-1] == "1":
-                    ProgramCounter.update(inst[8, 16])
+                    newPc = inst[8, 16]
 
         elif type(inst) == "F":
             halted = True
 
         if self.fun(inst) == "hlt":
-            return True  # TODO return updated register
+            return True, newPc
         else:
-            return False  # TODO return updated register
+            return False,  newPc
 
-
-def main():
-    # change
-    address = input()
-
-    inst = memory.get(address)
-
-    halted = False
-
-
-if __name__ == "__main__":
-    main()
