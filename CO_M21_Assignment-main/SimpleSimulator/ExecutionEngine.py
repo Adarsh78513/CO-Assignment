@@ -189,7 +189,7 @@ class ExecutionEngine:
 
             elif self.fun(inst) == "st":
                 self.reg.set("FLAGS", "0" * 16)
-                n = self.reg.get(self.regist[inst[5: 8]])
+                n = self.reg.get(self.regist(inst[5: 8]))
                 self.memory.set(inst[8: 16], decToBinary16(n))
 
         elif self.type(inst) == "E":
