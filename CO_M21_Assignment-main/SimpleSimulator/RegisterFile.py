@@ -11,13 +11,13 @@ registerValues = {
 
 class RegisterFile:
 
-    def get(registerName):
+    def get(self, registerName):
         return registerValues[registerName]
 
-    def set(registerName, setValue):
+    def set(self, registerName, setValue):
         registerValues[registerName] = setValue
 
-    def setFLAG(n1, n2):
+    def setFLAG(self, n1, n2):
         if n1 == n2:
             a = registerValues["FLAGS"]
             a = a[0:-1] + "1"
@@ -33,7 +33,7 @@ class RegisterFile:
             a = a[0:-3] + "1" + a[-2:]
             registerValues["FLAGS"] = a                   
 
-    def setOverFlow():
+    def setOverFlow(self):
         a = a = registerValues["FLAGS"]
         a = a[0:-3] + "1" + a[-2]
         registerValues["FLAGS"] = a
