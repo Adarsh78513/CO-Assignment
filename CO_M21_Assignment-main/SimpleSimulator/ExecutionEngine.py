@@ -79,7 +79,7 @@ class ExecutionEngine:
         return opcode[inst[0:5]][0]
 
     def type(self, inst):
-        return opcode[inst[0:5][1]]
+        return opcode[inst[0:5]][1]
 
     def regist(self, n):
         """takes the address of register and returns the name of register
@@ -96,101 +96,123 @@ class ExecutionEngine:
 
         newPc = decToBinary8(cycle)
 
-        if type(inst) == "A":
+        if self.type(inst) == "A":
 
             if self.fun(inst) == "add":
-                n = binToDec(self.reg.get(self.reg(inst[10, 13]))) + binToDec(self.reg.get(self.reg(inst[13, 16])))
+                n = binToDec(self.reg.get(self.regist(inst[10: 13]))) + binToDec(self.reg.get(self.regist(inst[13: 16])))
                 if n > 65535:
                     n = 0
                     self.reg.setOverFlow()
-                self.reg.set(self.regist(inst[7, 10]), decToBinary16(n))
+                else:
+                    self.reg.set("FLAGS", "0"*16)
+                self.reg.set(self.regist(inst[7: 10]), decToBinary16(n))
+
 
             elif self.fun(inst) == "sub":
-                n = binToDec(self.reg.get(self.reg(inst[10, 13]))) - binToDec(self.reg.get(self.reg(inst[13, 16])))
+                n = binToDec(self.reg.get(self.regist(inst[10: 13]))) - binToDec(self.reg.get(self.regist(inst[13: 16])))
                 if n < 0:
                     n = 0
                     self.reg.setOverFlow()
-                self.reg.set(self.reg(inst[7, 10]), decToBinary16(n))
+                else:
+                    self.reg.set("FLAGS", "0" * 16)
+                self.reg.set(self.reg(inst[7: 10]), decToBinary16(n))
 
             elif self.fun(inst) == "mul":
-                n = binToDec(self.reg.get(self.reg(inst[10, 13]))) * binToDec(self.reg.get(self.reg(inst[13, 16])))
+                n = binToDec(self.reg.get(self.regist(inst[10: 13]))) * binToDec(self.reg.get(self.regist(inst[13: 16])))
                 if n > 65535:
                     n = 0
                     self.reg.setOverFlow()
-                self.reg.set(self.reg(inst[7, 10]), decToBinary16(n))
+                else:
+                    self.reg.set("FLAGS", "0" * 16)
+                self.reg.set(self.reg(inst[7: 10]), decToBinary16(n))
 
             elif self.fun(inst) == "xor":
-                n = binToDec(self.reg.get(self.reg(inst[10, 13])) ^ binToDec(self.reg.get(self.reg(inst[13, 16]))))
-                self.reg.set(self.reg(inst[7, 10]), decToBinary16(n))
+                n = binToDec(self.reg.get(self.regist(inst[10: 13])) ^ binToDec(self.reg.get(self.regist(inst[13: 16]))))
+                self.reg.set(self.reg(inst[7: 10]), decToBinary16(n))
+                self.reg.set("FLAGS", "0" * 16)
 
             elif self.fun(inst) == "or":
-                n = binToDec(self.reg.get(self.reg(inst[10, 13])) | binToDec(self.reg.get(self.reg(inst[13, 16]))))
-                self.reg.set(self.reg(inst[7, 10]), decToBinary16(n))
+                n = binToDec(self.reg.get(self.regist(inst[10: 13])) | binToDec(self.reg.get(self.regist(inst[13: 16]))))
+                self.reg.set(self.reg(inst[7: 10]), decToBinary16(n))
+                self.reg.set("FLAGS", "0" * 16)
 
-            elif self.fun(inst) == "or":
-                n = binToDec(self.reg.get(self.reg(inst[10, 13])) & binToDec(self.reg.get(self.reg(inst[13, 16]))))
-                self.reg.set(self.reg(inst[7, 10]), decToBinary16(n))
+            elif self.fun(inst) == "and":
+                self.reg.set("FLAGS", "0" * 16)
+                n = binToDec(self.reg.get(self.regist(inst[10: 13])) & binToDec(self.reg.get(self.regist(inst[13: 16]))))
+                self.reg.set(self.reg(inst[7: 10]), decToBinary16(n))
 
-        elif type(inst) == "B":
-            if self.fun(inst) == "mov":
-                self.reg.set(self.regist(inst[5, 8]), inst[8, 16])
+        elif self.type(inst) == "B":
+            if self.fun(inst) == "movi":
+                self.reg.set("FLAGS", "0" * 16)
+                self.reg.set(self.regist(inst[5: 8]), "0"*8 + inst[8: 16])
 
             elif self.fun(inst) == "rs":
-                n = self.reg.get(self.reg(inst[5, 8])) >> decToBinary16(inst[8, 16])
+                self.reg.set("FLAGS", "0" * 16)
+                n = self.reg.get(self.regist(inst[5: 8])) >> decToBinary16(inst[8: 16])
 
-                self.reg.set(self.reg(inst[5, 8]), decToBinary16(inst[8, 16]))
+                self.reg.set(self.reg(inst[5: 8]),  "0"*8 + decToBinary16(n))
 
             elif self.fun(inst) == "ls":
-                n = self.reg.get(self.reg(inst[5, 8])) << decToBinary16(inst[8, 16])
+                self.reg.set("FLAGS", "0" * 16)
+                n = self.reg.get(self.regist(inst[5: 8])) << decToBinary16(inst[8: 16])
 
-                self.reg.set(self.reg(inst[5, 8]), decToBinary16(inst[8, 16]))
+                self.reg.set(self.reg(inst[5: 8]), "0"*8 + decToBinary16(n))
 
-        elif type(inst) == "C":
-            if self.fun(inst) == "mov":
-                self.reg.set(self.reg(inst[10, 13]), self.reg.get(self.reg(inst[13, 16])))
+        elif self.type(inst) == "C":
+            if self.fun(inst) == "movr":
+                self.reg.set(self.regist(inst[10: 13]), self.reg.get(self.regist(inst[13: 16])))
+                self.reg.set("FLAGS", "0" * 16)
 
             elif self.fun(inst) == "not":
-                n = ~ self.reg.get(self.reg(inst[13, 16]))
-                self.reg.set(self.reg(inst[10, 13]), decToBinary16(n))
+                self.reg.set("FLAGS", "0" * 16)
+                n = ~ self.reg.get(self.regist(inst[13: 16]))
+                self.reg.set(self.reg(inst[10: 13]), decToBinary16(n))
 
             elif self.fun(inst) == "cmp":
-                n1 = self.reg.get(self.reg(inst[10, 13]))
-                n2 = self.reg.get(self.reg(inst[13, 16]))
-                self.reg.setFlag(n1, n2)
+                n1 = self.reg.get(self.regist(inst[10: 13]))
+                n2 = self.reg.get(self.regist(inst[13: 16]))
+                self.reg.setFLAG(n1, n2)
 
             elif self.fun(inst) == "div":
-                quotient = self.reg.get(self.reg(inst[10, 13])) // self.reg.get(self.reg(inst[13, 16]))
-                remainder = self.reg.get(self.reg(inst[10, 13])) % self.reg.get(self.reg(inst[13, 16]))
+                self.reg.set("FLAGS", "0" * 16)
+                quotient = self.reg.get(self.regist(inst[10: 13])) // self.reg.get(self.regist(inst[13: 16]))
+                remainder = self.reg.get(self.regist(inst[10: 13])) % self.reg.get(self.regist(inst[13: 16]))
 
                 self.reg.set("R0", decToBinary16(quotient))
                 self.reg.set("R1", decToBinary16(remainder))
 
-        elif type(inst) == "D":
+        elif self.type(inst) == "D":
             if self.fun(inst) == "ld":
-                n = self.memory.get(inst[8, 16])
-                self.reg.set(self.reg(inst[5, 8]), decToBinary16(n))
+                self.reg.set("FLAGS", "0" * 16)
+                n = self.memory.get(inst[8: 16])
+                self.reg.set(self.reg(inst[5: 8]), decToBinary16(n))
 
             elif self.fun(inst) == "st":
-                n = self.reg.get(self.reg[inst[5, 8]])
-                self.memory.set(inst[8, 16], decToBinary16(n))
+                self.reg.set("FLAGS", "0" * 16)
+                n = self.reg.get(self.regist[inst[5: 8]])
+                self.memory.set(inst[8: 16], decToBinary16(n))
 
-        elif type(inst) == "E":
+        elif self.type(inst) == "E":
             if self.fun(inst) == "jmp":
-                newPc = inst[8, 16]
+                newPc = inst[8: 16]
+                self.reg.set("FLAGS", "0" * 16)
 
             elif self.fun(inst) == "jlt":
                 if self.reg.get("FLAGS")[-3] == "1":
-                    newPc = inst[8, 16]
+                    newPc = inst[8: 16]
+                self.reg.set("FLAGS", "0" * 16)
 
             elif self.fun(inst) == "jgt":
                 if self.reg.get("FLAGS")[-2] == "1":
-                    newPc = inst[8, 16]
+                    newPc = inst[8: 16]
+                self.reg.set("FLAGS", "0" * 16)
 
             elif self.fun(inst) == "je":
                 if self.reg.get("FLAGS")[-1] == "1":
-                    newPc = inst[8, 16]
+                    newPc = inst[8: 16]
+                self.reg.set("FLAGS", "0" * 16)
 
-        elif type(inst) == "F":
+        elif self.type(inst) == "F":
             halted = True
 
         if self.fun(inst) == "hlt":
