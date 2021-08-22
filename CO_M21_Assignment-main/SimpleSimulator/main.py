@@ -14,7 +14,7 @@ def main():
 
     while not halted:
         inst = memory.get(pc.getVal(), cycle)
-        halted, newPc = ExecutionEngine.execute(inst)
+        halted, newPc = executionEngine.execute(inst)
 
         pc.dump()
         reg.dump()
