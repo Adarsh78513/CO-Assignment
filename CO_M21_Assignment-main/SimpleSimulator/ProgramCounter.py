@@ -22,7 +22,7 @@ def decToBinary8(n):
 class ProgramCounter:
 
     def __init__(self, counter):
-        self.counter = decToBinary8(counter)
+        self.counter = str(decToBinary8(counter))
 
     def getVal(self):
         return self.counter
@@ -31,4 +31,4 @@ class ProgramCounter:
         self.counter = mem_address
 
     def dump(self):
-        print(self.counter + " ", end=" ")
+        print(self.counter, end=" ")

@@ -1,8 +1,11 @@
 instList = []
 
 while True:
-    temp = input()
-    if len(temp) == 0:
+    try:
+        temp = input()
+        if len(temp) == 0:
+            break
+    except EOFError:
         break
     instList.append(temp)
 

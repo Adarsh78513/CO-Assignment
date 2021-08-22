@@ -55,6 +55,11 @@ def decToBinary16(n):
     s = "0" * (16 - len(s)) + s
     return s
 
+def decToBinary8(n):
+    s = bin(n)
+    s = s[2::]
+    s = "0" * (8 - len(s)) + s
+    return s
 
 class ExecutionEngine:
 
@@ -76,7 +81,7 @@ class ExecutionEngine:
     def type(self, inst):
         return opcode[inst[0:5][1]]
 
-    def reg(self, n):
+    def regist(self, n):
         """takes the address of register and returns the name of register
 
         Args:
@@ -89,7 +94,7 @@ class ExecutionEngine:
 
     def execute(self, inst, cycle):
 
-        newPc = cycle
+        newPc = decToBinary8(cycle)
 
         if type(inst) == "A":
 
@@ -98,7 +103,7 @@ class ExecutionEngine:
                 if n > 65535:
                     n = 0
                     self.reg.setOverFlow()
-                self.reg.set(self.reg(inst[7, 10]), decToBinary16(n))
+                self.reg.set(self.regist(inst[7, 10]), decToBinary16(n))
 
             elif self.fun(inst) == "sub":
                 n = binToDec(self.reg.get(self.reg(inst[10, 13]))) - binToDec(self.reg.get(self.reg(inst[13, 16])))
@@ -128,7 +133,7 @@ class ExecutionEngine:
 
         elif type(inst) == "B":
             if self.fun(inst) == "mov":
-                self.reg.set(self.reg(inst[5, 8]), inst[8, 16])
+                self.reg.set(self.regist(inst[5, 8]), inst[8, 16])
 
             elif self.fun(inst) == "rs":
                 n = self.reg.get(self.reg(inst[5, 8])) >> decToBinary16(inst[8, 16])
