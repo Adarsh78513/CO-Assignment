@@ -84,7 +84,7 @@ class ExecutionEngine:
         s = "0" * (16 - len(s)) + s
         return s
 
-    inst = Memory.getInst(address)
+    inst = Memory.get(address)
     
     halted = False
     
@@ -181,8 +181,12 @@ class ExecutionEngine:
     elif type(inst) == "F":
         halted == True
         
-    print(ProgramCounter.pc + " " + RegisterFile.R0 +  " " + RegisterFile.R1 + " " +
-          RegisterFile.R2 + " " + 
-          RegisterFile.R3 + RegisterFile.R4 + " " + RegisterFile.R5 + 
-          RegisterFile.R6 + " " + 
-          RegisterFile.Flag)
+    print(ProgramCounter.pc + " " + 
+          RegisterFile.get("R0") + " " + 
+          RegisterFile.get("R1") + " " +
+          RegisterFile.get("R2") + " " + 
+          RegisterFile.get("R3") + " " + 
+          RegisterFile.get("R4") + " " + 
+          RegisterFile.get("R5") + " " + 
+          RegisterFile.get("R6") + " " + 
+          RegisterFile.get("FLAGS"))
