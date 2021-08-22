@@ -36,12 +36,13 @@ register = {
     "111": "FLAGS"
 }
 
+
 class ExecutionEngine:
-    
+
     def __init__(self, address):
         self.address = address
-    
-    def fun(inst):
+
+    def fun(self, inst):
         """for finding what command the binary line means
     
         Args:
@@ -50,12 +51,12 @@ class ExecutionEngine:
         Returns:
             name of function
         """
-        return opcode[inst[0:5]][0]
-    
-    def type(inst):
-        return opcode[inst[0:5][1]]
-        
-    def reg(n):
+        return opcode[self.inst[0:5]][0]
+
+    def type(self, inst):
+        return opcode[self.inst[0:5][1]]
+
+    def reg(self, n):
         """takes the adress of register and returns the name of register
 
         Args:
@@ -64,9 +65,9 @@ class ExecutionEngine:
         Returns:
             [mane]
         """
-        return register[n]
-    
-    def binToDec(num):
+        return register[self.n]
+
+    def binToDec(self, num):
         """[summary]
 
         Args:
@@ -75,89 +76,93 @@ class ExecutionEngine:
         Returns:
             [integer]: [description]
         """
-        return int(num,2)
-    
+        return int(num, 2)
 
-    def decToBinary16(n):
+    def decToBinary16(self, n):
         s = bin(n)
         s = s[2::]
         s = "0" * (16 - len(s)) + s
         return s
 
-    inst = Memory.get(address)
-    
+
+def main():
+    # change
+    address = input()
+
+    inst = memory.get(address)
+
     halted = False
-    
+
     if type(inst) == "A":
-        if fun(inst) == "add":
+        if ExecutionEngine.fun(inst) == "add":
             n = binToDec(RegisterFile.get(reg(inst[10, 13]))) + binToDec(RegisterFile.get(reg(inst[13, 16])))
-            if ( n > 65535):
+            if n > 65535:
                 n = 0
-                RegisterFile.setOverFlow
-            RegisterFile.set(reg(inst[7,10]), decToBinary16(n))
+                RegisterFile.setOverFlow()
+            RegisterFile.set(reg(inst[7, 10]), decToBinary16(n))
 
         elif fun(inst) == "sub":
             n = binToDec(RegisterFile.get(reg(inst[10, 13]))) - binToDec(RegisterFile.get(reg(inst[13, 16])))
-            if ( n < 0):
+            if n < 0:
                 n = 0
-                RegisterFile.setOverFlow
-            RegisterFile.set(reg(inst[7,10]), decToBinary16(n))
+                RegisterFile.setOverFlow()
+            RegisterFile.set(reg(inst[7, 10]), decToBinary16(n))
 
         elif fun(inst) == "mul":
             n = binToDec(RegisterFile.get(reg(inst[10, 13]))) * binToDec(RegisterFile.get(reg(inst[13, 16])))
-            if ( n > 65535):
+            if n > 65535:
                 n = 0
-                RegisterFile.setOverFlow
-            RegisterFile.set(reg(inst[7,10]), decToBinary16(n))
-        
+                RegisterFile.setOverFlow()
+            RegisterFile.set(reg(inst[7, 10]), decToBinary16(n))
+
         elif fun(inst) == "xor":
             n = binToDec(RegisterFile.get(reg(inst[10, 13])) ^ binToDec(RegisterFile.get(reg(inst[13, 16]))))
-            RegisterFile.set(reg(inst[7,10]), decToBinary16(n))
-        
+            RegisterFile.set(reg(inst[7, 10]), decToBinary16(n))
+
         elif fun(inst) == "or":
             n = binToDec(RegisterFile.get(reg(inst[10, 13])) | binToDec(RegisterFile.get(reg(inst[13, 16]))))
-            RegisterFile.set(reg(inst[7,10]), decToBinary16(n))
-        
+            RegisterFile.set(reg(inst[7, 10]), decToBinary16(n))
+
         elif fun(inst) == "or":
             n = binToDec(RegisterFile.get(reg(inst[10, 13])) & binToDec(RegisterFile.get(reg(inst[13, 16]))))
-            RegisterFile.set(reg(inst[7,10]), decToBinary16(n))
-            
+            RegisterFile.set(reg(inst[7, 10]), decToBinary16(n))
+
     elif type(inst) == "B":
         if fun(inst) == "mov":
-            RegisterFile.set(reg(inst[5,8]), inst[8, 16])
-        
+            RegisterFile.set(reg(inst[5, 8]), inst[8, 16])
+
         elif fun(inst) == "rs":
-            n = RegisterFile.get(reg(inst[5 ,8])) >> decToBinary16(inst[8,16])
-            RegisterFile.set(reg(inst[5,8]), decToBinary16(inst[8,16]))
-        
+            n = RegisterFile.get(reg(inst[5, 8])) >> decToBinary16(inst[8, 16])
+            RegisterFile.set(reg(inst[5, 8]), decToBinary16(inst[8, 16]))
+
         elif fun(inst) == "ls":
-            n = RegisterFile.get(reg(inst[5 ,8])) << decToBinary16(inst[8,16])
-            RegisterFile.set(reg(inst[5,8]), decToBinary16(inst[8,16]))
-        
+            n = RegisterFile.get(reg(inst[5, 8])) << decToBinary16(inst[8, 16])
+            RegisterFile.set(reg(inst[5, 8]), decToBinary16(inst[8, 16]))
+
     elif type(inst) == "C":
-        if ( fun(inst) == "mov"):
+        if fun(inst) == "mov":
             RegisterFile.set(reg(inst[10, 13]), RegisterFile.get(reg(inst[13, 16])))
-        
-        elif ( fun(inst) == "not"):
+
+        elif fun(inst) == "not":
             n = ~ RegisterFile.get(reg(inst[13, 16]))
             RegisterFile.set(reg(inst[10, 13]), decToBinary16(n))
-        
-        elif ( fun(inst) == "cmp"):
+
+        elif fun(inst) == "cmp":
             n1 = RegisterFile.get(reg(inst[10, 13]))
             n2 = RegisterFile.get(reg(inst[13, 16]))
             RegisterFile.setFlag(n1, n2)
-        
+
         elif fun(inst) == "div":
             quotient = RegisterFile.get(reg(inst[10, 13])) // RegisterFile.get(reg(inst[13, 16]))
             remainder = RegisterFile.get(reg(inst[10, 13])) % RegisterFile.get(reg(inst[13, 16]))
             RegisterFile.set("R0", decToBinary16(quotient))
             RegisterFile.set("R1", decToBinary16(remainder))
-    
+
     elif type(inst) == "D":
         if fun(inst) == "ld":
-            n = Memory.get(inst[8,16])
-            RegisterFile.set( reg(inst[5,8]) , decToBinary16(n))
-        
+            n = Memory.get(inst[8, 16])
+            RegisterFile.set(reg(inst[5, 8]), decToBinary16(n))
+
         elif fun(inst) == "st":
             n = RegisterFile.get(reg[inst[5, 8]])
             Memory.set(inst[8, 16], decToBinary16(n))
@@ -165,28 +170,32 @@ class ExecutionEngine:
     elif type(inst) == "E":
         if fun(inst) == "jmp":
             ProgramCounter.set(inst[8, 16])
-        
+
         elif fun(inst) == "jlt":
             if RegisterFile.get("FLAGS")[-3] == "1":
                 ProgramCounter.set(inst[8, 16])
-        
+
         elif fun(inst) == "jgt":
             if RegisterFile.get("FLAGS")[-2] == "1":
                 ProgramCounter.set(inst[8, 16])
-        
+
         elif fun(inst) == "je":
             if RegisterFile.get("FLAGS")[-1] == "1":
                 ProgramCounter.set(inst[8, 16])
-    
+
     elif type(inst) == "F":
-        halted == True
-        
-    print(ProgramCounter.getVal() + " " + 
-          RegisterFile.get("R0") + " " + 
+        halted = True
+
+    print(ProgramCounter.getVal() + " " +
+          RegisterFile.get("R0") + " " +
           RegisterFile.get("R1") + " " +
-          RegisterFile.get("R2") + " " + 
-          RegisterFile.get("R3") + " " + 
-          RegisterFile.get("R4") + " " + 
-          RegisterFile.get("R5") + " " + 
-          RegisterFile.get("R6") + " " + 
+          RegisterFile.get("R2") + " " +
+          RegisterFile.get("R3") + " " +
+          RegisterFile.get("R4") + " " +
+          RegisterFile.get("R5") + " " +
+          RegisterFile.get("R6") + " " +
           RegisterFile.get("FLAGS"))
+
+
+if __name__ == "__main__":
+    main()
