@@ -169,19 +169,19 @@ def main():
 
     elif type(inst) == "E":
         if fun(inst) == "jmp":
-            ProgramCounter.set(inst[8, 16])
+            ProgramCounter.jump(inst[8, 16])
 
         elif fun(inst) == "jlt":
             if RegisterFile.get("FLAGS")[-3] == "1":
-                ProgramCounter.set(inst[8, 16])
+                ProgramCounter.jump(inst[8, 16])
 
         elif fun(inst) == "jgt":
             if RegisterFile.get("FLAGS")[-2] == "1":
-                ProgramCounter.set(inst[8, 16])
+                ProgramCounter.jump(inst[8, 16])
 
         elif fun(inst) == "je":
             if RegisterFile.get("FLAGS")[-1] == "1":
-                ProgramCounter.set(inst[8, 16])
+                ProgramCounter.jump(inst[8, 16])
 
     elif type(inst) == "F":
         halted = True
