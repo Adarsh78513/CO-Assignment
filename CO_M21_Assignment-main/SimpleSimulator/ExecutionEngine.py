@@ -94,7 +94,7 @@ class ExecutionEngine:
 
     def execute(self, inst, cycle):
 
-        newPc = decToBinary8(cycle)
+        newPc = decToBinary8(cycle + 1)
 
         if self.type(inst) == "A":
 
