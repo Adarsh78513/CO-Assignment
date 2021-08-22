@@ -37,6 +37,23 @@ register = {
 }
 
 
+def binToDec(num):
+    """[summary]
+
+    Args:
+        num ([string]): [binary number]
+
+    Returns:
+        [integer]: [description]
+    """
+    return int(num, 2)
+
+def decToBinary16(n):
+    s = bin(n)
+    s = s[2::]
+    s = "0" * (16 - len(s)) + s
+    return s
+
 class ExecutionEngine:
 
     def __init__(self, address):
@@ -67,24 +84,6 @@ class ExecutionEngine:
         """
         return register[self.n]
 
-    def binToDec(self, num):
-        """[summary]
-
-        Args:
-            num ([string]): [binary number]
-
-        Returns:
-            [integer]: [description]
-        """
-        return int(num, 2)
-
-    def decToBinary16(self, n):
-        s = bin(n)
-        s = s[2::]
-        s = "0" * (16 - len(s)) + s
-        return s
-
-
 def main():
     # change
     address = input()
@@ -95,91 +94,91 @@ def main():
 
     if type(inst) == "A":
         if ExecutionEngine.fun(inst) == "add":
-            n = binToDec(RegisterFile.get(reg(inst[10, 13]))) + binToDec(RegisterFile.get(reg(inst[13, 16])))
+            n = binToDec(RegisterFile.get(ExecutionEngine.reg(inst[10, 13]))) + binToDec(RegisterFile.get(ExecutionEngine.reg(inst[13, 16])))
             if n > 65535:
                 n = 0
                 RegisterFile.setOverFlow()
-            RegisterFile.set(reg(inst[7, 10]), decToBinary16(n))
+            RegisterFile.set(ExecutionEngine.reg(inst[7, 10]), decToBinary16(n))
 
-        elif fun(inst) == "sub":
-            n = binToDec(RegisterFile.get(reg(inst[10, 13]))) - binToDec(RegisterFile.get(reg(inst[13, 16])))
+        elif ExecutionEngine.fun(inst) == "sub":
+            n = binToDec(RegisterFile.get(ExecutionEngine.reg(inst[10, 13]))) - binToDec(RegisterFile.get(ExecutionEngine.reg(inst[13, 16])))
             if n < 0:
                 n = 0
                 RegisterFile.setOverFlow()
-            RegisterFile.set(reg(inst[7, 10]), decToBinary16(n))
+            RegisterFile.set(ExecutionEngine.reg(inst[7, 10]), decToBinary16(n))
 
-        elif fun(inst) == "mul":
-            n = binToDec(RegisterFile.get(reg(inst[10, 13]))) * binToDec(RegisterFile.get(reg(inst[13, 16])))
+        elif ExecutionEngine.fun(inst) == "mul":
+            n = binToDec(RegisterFile.get(ExecutionEngine.reg(inst[10, 13]))) * binToDec(RegisterFile.get(ExecutionEngine.reg(inst[13, 16])))
             if n > 65535:
                 n = 0
                 RegisterFile.setOverFlow()
-            RegisterFile.set(reg(inst[7, 10]), decToBinary16(n))
+            RegisterFile.set(ExecutionEngine.reg(inst[7, 10]), decToBinary16(n))
 
-        elif fun(inst) == "xor":
-            n = binToDec(RegisterFile.get(reg(inst[10, 13])) ^ binToDec(RegisterFile.get(reg(inst[13, 16]))))
-            RegisterFile.set(reg(inst[7, 10]), decToBinary16(n))
+        elif ExecutionEngine.fun(inst) == "xor":
+            n = binToDec(RegisterFile.get(ExecutionEngine.reg(inst[10, 13])) ^ binToDec(RegisterFile.get(ExecutionEngine.reg(inst[13, 16]))))
+            RegisterFile.set(ExecutionEngine.reg(inst[7, 10]), decToBinary16(n))
 
-        elif fun(inst) == "or":
-            n = binToDec(RegisterFile.get(reg(inst[10, 13])) | binToDec(RegisterFile.get(reg(inst[13, 16]))))
-            RegisterFile.set(reg(inst[7, 10]), decToBinary16(n))
+        elif ExecutionEngine.fun(inst) == "or":
+            n = binToDec(RegisterFile.get(ExecutionEngine.reg(inst[10, 13])) | binToDec(RegisterFile.get(ExecutionEngine.reg(inst[13, 16]))))
+            RegisterFile.set(ExecutionEngine.reg(inst[7, 10]), decToBinary16(n))
 
-        elif fun(inst) == "or":
-            n = binToDec(RegisterFile.get(reg(inst[10, 13])) & binToDec(RegisterFile.get(reg(inst[13, 16]))))
-            RegisterFile.set(reg(inst[7, 10]), decToBinary16(n))
+        elif ExecutionEngine.fun(inst) == "or":
+            n = binToDec(RegisterFile.get(ExecutionEngine.reg(inst[10, 13])) & binToDec(RegisterFile.get(ExecutionEngine.reg(inst[13, 16]))))
+            RegisterFile.set(ExecutionEngine.reg(inst[7, 10]), decToBinary16(n))
 
     elif type(inst) == "B":
-        if fun(inst) == "mov":
-            RegisterFile.set(reg(inst[5, 8]), inst[8, 16])
+        if ExecutionEngine.fun(inst) == "mov":
+            RegisterFile.set(ExecutionEngine.reg(inst[5, 8]), inst[8, 16])
 
-        elif fun(inst) == "rs":
-            n = RegisterFile.get(reg(inst[5, 8])) >> decToBinary16(inst[8, 16])
-            RegisterFile.set(reg(inst[5, 8]), decToBinary16(inst[8, 16]))
+        elif ExecutionEngine.fun(inst) == "rs":
+            n = RegisterFile.get(ExecutionEngine.reg(inst[5, 8])) >> decToBinary16(inst[8, 16])
+            RegisterFile.set(ExecutionEngine.reg(inst[5, 8]), decToBinary16(inst[8, 16]))
 
-        elif fun(inst) == "ls":
-            n = RegisterFile.get(reg(inst[5, 8])) << decToBinary16(inst[8, 16])
-            RegisterFile.set(reg(inst[5, 8]), decToBinary16(inst[8, 16]))
+        elif ExecutionEngine.fun(inst) == "ls":
+            n = RegisterFile.get(ExecutionEngine.reg(inst[5, 8])) << decToBinary16(inst[8, 16])
+            RegisterFile.set(ExecutionEngine.reg(inst[5, 8]), decToBinary16(inst[8, 16]))
 
     elif type(inst) == "C":
-        if fun(inst) == "mov":
-            RegisterFile.set(reg(inst[10, 13]), RegisterFile.get(reg(inst[13, 16])))
+        if ExecutionEngine.fun(inst) == "mov":
+            RegisterFile.set(ExecutionEngine.reg(inst[10, 13]), RegisterFile.get(ExecutionEngine.reg(inst[13, 16])))
 
-        elif fun(inst) == "not":
-            n = ~ RegisterFile.get(reg(inst[13, 16]))
-            RegisterFile.set(reg(inst[10, 13]), decToBinary16(n))
+        elif ExecutionEngine.fun(inst) == "not":
+            n = ~ RegisterFile.get(ExecutionEngine.reg(inst[13, 16]))
+            RegisterFile.set(ExecutionEngine.reg(inst[10, 13]), decToBinary16(n))
 
-        elif fun(inst) == "cmp":
-            n1 = RegisterFile.get(reg(inst[10, 13]))
-            n2 = RegisterFile.get(reg(inst[13, 16]))
+        elif ExecutionEngine.fun(inst) == "cmp":
+            n1 = RegisterFile.get(ExecutionEngine.reg(inst[10, 13]))
+            n2 = RegisterFile.get(ExecutionEngine.reg(inst[13, 16]))
             RegisterFile.setFlag(n1, n2)
 
-        elif fun(inst) == "div":
-            quotient = RegisterFile.get(reg(inst[10, 13])) // RegisterFile.get(reg(inst[13, 16]))
-            remainder = RegisterFile.get(reg(inst[10, 13])) % RegisterFile.get(reg(inst[13, 16]))
+        elif ExecutionEngine.fun(inst) == "div":
+            quotient = RegisterFile.get(ExecutionEngine.reg(inst[10, 13])) // RegisterFile.get(ExecutionEngine.reg(inst[13, 16]))
+            remainder = RegisterFile.get(ExecutionEngine.reg(inst[10, 13])) % RegisterFile.get(ExecutionEngine.reg(inst[13, 16]))
             RegisterFile.set("R0", decToBinary16(quotient))
             RegisterFile.set("R1", decToBinary16(remainder))
 
     elif type(inst) == "D":
-        if fun(inst) == "ld":
+        if ExecutionEngine.fun(inst) == "ld":
             n = Memory.get(inst[8, 16])
-            RegisterFile.set(reg(inst[5, 8]), decToBinary16(n))
+            RegisterFile.set(ExecutionEngine.reg(inst[5, 8]), decToBinary16(n))
 
-        elif fun(inst) == "st":
-            n = RegisterFile.get(reg[inst[5, 8]])
+        elif ExecutionEngine.fun(inst) == "st":
+            n = RegisterFile.get(ExecutionEngine.reg[inst[5, 8]])
             Memory.set(inst[8, 16], decToBinary16(n))
 
     elif type(inst) == "E":
-        if fun(inst) == "jmp":
+        if ExecutionEngine.fun(inst) == "jmp":
             ProgramCounter.jump(inst[8, 16])
 
-        elif fun(inst) == "jlt":
+        elif ExecutionEngine.fun(inst) == "jlt":
             if RegisterFile.get("FLAGS")[-3] == "1":
                 ProgramCounter.jump(inst[8, 16])
 
-        elif fun(inst) == "jgt":
+        elif ExecutionEngine.fun(inst) == "jgt":
             if RegisterFile.get("FLAGS")[-2] == "1":
                 ProgramCounter.jump(inst[8, 16])
 
-        elif fun(inst) == "je":
+        elif ExecutionEngine.fun(inst) == "je":
             if RegisterFile.get("FLAGS")[-1] == "1":
                 ProgramCounter.jump(inst[8, 16])
 
