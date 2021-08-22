@@ -181,7 +181,7 @@ class ExecutionEngine:
     elif type(inst) == "F":
         halted == True
         
-    print(ProgramCounter.pc + " " + 
+    print(ProgramCounter.getVal() + " " + 
           RegisterFile.get("R0") + " " + 
           RegisterFile.get("R1") + " " +
           RegisterFile.get("R2") + " " + 
