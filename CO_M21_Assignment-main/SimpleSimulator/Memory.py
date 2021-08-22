@@ -19,3 +19,7 @@ class Memory:
 
     def get(self, line):
         return self.mem[int(line)]
+
+    def dump(self):
+        for k in self.mem:
+            print(k)

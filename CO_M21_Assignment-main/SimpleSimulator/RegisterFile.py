@@ -9,6 +9,7 @@ registerValues = {
     "FLAGS": "0000000000000000",
 }
 
+
 class RegisterFile:
 
     def get(self, registerName):
@@ -31,9 +32,19 @@ class RegisterFile:
         elif n1 < n2:
             a = registerValues["FLAGS"]
             a = a[0:-3] + "1" + a[-2:]
-            registerValues["FLAGS"] = a                   
+            registerValues["FLAGS"] = a
 
     def setOverFlow(self):
         a = a = registerValues["FLAGS"]
         a = a[0:-3] + "1" + a[-2]
         registerValues["FLAGS"] = a
+
+    def dump(self):
+        print(registerValues["R0"] + " " +
+              registerValues["R1"] + " " +
+              registerValues["R2"] + " " +
+              registerValues["R3"] + " " +
+              registerValues["R4"] + " " +
+              registerValues["R5"] + " " +
+              registerValues["R6"] + " " +
+              registerValues["FLAGS"])
