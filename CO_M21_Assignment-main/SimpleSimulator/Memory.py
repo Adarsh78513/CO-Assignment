@@ -21,8 +21,10 @@ def binToDec(num):
     return int(num, 2)
 
 class Memory:
+
     def __init__(self):
         mem = []
+        self.current = 0
 
         # empty memory
         for j in range(256):
@@ -32,6 +34,8 @@ class Memory:
         self.instList = instList
         for index in range(len(self.instList)):
             mem[index] = self.instList[index]
+            self.current = index
+        self.current += 1
 
     def get(self, index, cycle):
         return self.mem[binToDec(str(index))]
@@ -39,3 +43,8 @@ class Memory:
     def dump(self):
         for k in self.mem:
             print(k)
+
+    def set(self, val):
+        self.mem[self.current] = val
+        self.current += 1
+

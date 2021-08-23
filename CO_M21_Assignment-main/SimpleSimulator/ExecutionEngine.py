@@ -115,7 +115,7 @@ class ExecutionEngine:
                     self.reg.setOverFlow()
                 else:
                     self.reg.set("FLAGS", "0" * 16)
-                self.reg.set(self.reg(inst[7: 10]), decToBinary16(n))
+                self.reg.set(self.regist(inst[7: 10]), decToBinary16(n))
 
             elif self.fun(inst) == "mul":
                 n = binToDec(self.reg.get(self.regist(inst[10: 13]))) * binToDec(self.reg.get(self.regist(inst[13: 16])))
@@ -190,7 +190,7 @@ class ExecutionEngine:
             elif self.fun(inst) == "st":
                 self.reg.set("FLAGS", "0" * 16)
                 n = self.reg.get(self.regist(inst[5: 8]))
-                self.memory.set(inst[8: 16], decToBinary16(n))
+                self.memory.set(n)
 
         elif self.type(inst) == "E":
             if self.fun(inst) == "jmp":
