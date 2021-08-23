@@ -57,4 +57,4 @@ class RegisterFile:
               self.registerValues["R4"] + " " +
               self.registerValues["R5"] + " " +
               self.registerValues["R6"] + " " +
-              self.registerValues["FLAGS"])
+              self.registerValues["FLAGS"] + " ")
