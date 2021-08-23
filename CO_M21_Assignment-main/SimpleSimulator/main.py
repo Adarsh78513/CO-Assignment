@@ -1,9 +1,11 @@
 from ExecutionEngine import ExecutionEngine
-from Memory import Memory
+from Memory import Memory 
+from Memory import binToDec
 from ProgramCounter import ProgramCounter
 from RegisterFile import RegisterFile
 import matplotlib.pyplot as plt
-from plotlist import plot_list
+import plotlist
+
 
 def main():
     memory = Memory()
@@ -15,7 +17,7 @@ def main():
 
     while not halted:
         inst = memory.get(pc.getVal(), cycle)
-        plot_list.add([cycle,pc.getVal])
+        plotlist.plot_list.append([cycle,binToDec(pc.getVal())])
         halted, newPc = executionEngine.execute(inst, cycle)
 
         pc.dump()
@@ -25,7 +27,7 @@ def main():
         cycle += 1
 
     memory.dump()
-    x,y=zip(*plot_list)
+    x,y=zip(*plotlist.plot_list)
     plt.plot(x,y)
     plt.savefig("ploted_graph.png")
 

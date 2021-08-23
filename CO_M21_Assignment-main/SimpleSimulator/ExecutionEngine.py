@@ -1,5 +1,5 @@
-from plotlist import plot_list
-#from Memory import binToDec
+import plotlist
+from Memory import binToDec
 opcode = {
     "00000": ("add", "A"),
     "00001": ("sub", "A"),
@@ -182,12 +182,13 @@ class ExecutionEngine:
             if self.fun(inst) == "ld":
                 self.reg.set("FLAGS", "0" * 16)
                 n = self.memory.get(inst[8: 16])
-                plot_list.add([cycle,n])
+                plotlist.plot_list.append([cycle,int(binToDec(inst[8: 16]))])
                 self.reg.set(self.reg(inst[5: 8]), decToBinary16(n))
 
             elif self.fun(inst) == "st":
                 self.reg.set("FLAGS", "0" * 16)
                 n = self.reg.get(self.regist(inst[5: 8]))
+                plotlist.plot_list.append([cycle,int(binToDec(inst[8: 16]))])
                 self.memory.set(n)
 
         elif self.type(inst) == "E":
