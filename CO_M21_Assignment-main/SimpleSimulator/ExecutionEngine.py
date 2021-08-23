@@ -1,4 +1,3 @@
-
 opcode = {
     "00000": ("add", "A"),
     "00001": ("sub", "A"),
@@ -32,7 +31,6 @@ register = {
     "110": "R6",
     "111": "FLAGS"
 }
-
 
 def binToDec(num):
     """[summary]
