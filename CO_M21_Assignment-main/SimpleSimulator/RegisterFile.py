@@ -1,15 +1,3 @@
-# registerValues = {
-#     "R0": "0000000000000000",
-#     "R1": "0000000000000000",
-#     "R2": "0000000000000000",
-#     "R3": "0000000000000000",
-#     "R4": "0000000000000000",
-#     "R5": "0000000000000000",
-#     "R6": "0000000000000000",
-#     "FLAGS": "0000000000000000",
-# }
-
-
 class RegisterFile:
 
     def __init__(self):
@@ -29,6 +17,11 @@ class RegisterFile:
 
     def set(self, registerName, setValue):
         self.registerValues[registerName] = setValue
+    
+    def setOverFlow(self):
+        a = self.registerValues["FLAGS"]
+        a = a[0:-3] + "1" + a[-2]
+        self.registerValues["FLAGS"] = a
 
     def setFLAG(self, n1, n2):
         a = self.registerValues["FLAGS"]
@@ -43,11 +36,6 @@ class RegisterFile:
         elif n1 < n2:
             a = a[0:-3] + "1" + a[-2:]
             self.registerValues["FLAGS"] = a
-
-    def setOverFlow(self):
-        a = self.registerValues["FLAGS"]
-        a = a[0:-3] + "1" + a[-2]
-        self.registerValues["FLAGS"] = a
 
     def dump(self):
         print(self.registerValues["R0"] + " " +

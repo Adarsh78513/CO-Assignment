@@ -1,5 +1,3 @@
-
-
 def binToDec(num):
     """[summary]
 
@@ -11,13 +9,11 @@ def binToDec(num):
     """
     return int(num, 2)
 
-
 def decToBinary8(n):
     s = bin(n)
     s = s[2::]
     s = "0" * (8 - len(s)) + s
     return s
-
 
 class ProgramCounter:
 
