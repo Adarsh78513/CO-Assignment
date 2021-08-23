@@ -9,7 +9,7 @@ def main():
     pc = ProgramCounter(0)
     halted = False
     reg = RegisterFile()
-    executionEngine = ExecutionEngine(memory, reg)
+    executionEngine = ExecutionEngine(memory, reg, pc)
     cycle = 0
 
     while not halted:

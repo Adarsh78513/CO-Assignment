@@ -1,6 +1,3 @@
-from Memory import Memory
-from ProgramCounter import ProgramCounter
-from RegisterFile import RegisterFile
 
 opcode = {
     "00000": ("add", "A"),
@@ -63,9 +60,10 @@ def decToBinary8(n):
 
 class ExecutionEngine:
 
-    def __init__(self, memory, reg):
+    def __init__(self, memory, reg, pc):
         self.memory = memory
         self.reg = reg
+        self.pc = pc
 
     def fun(self, inst):
         """for finding what command the binary line means
@@ -94,7 +92,7 @@ class ExecutionEngine:
 
     def execute(self, inst, cycle):
 
-        newPc = decToBinary8(cycle + 1)
+        newPc = decToBinary8(binToDec(self.pc.getVal()) + 1)
 
         if self.type(inst) == "A":
 
@@ -106,7 +104,6 @@ class ExecutionEngine:
                 else:
                     self.reg.set("FLAGS", "0"*16)
                 self.reg.set(self.regist(inst[7: 10]), decToBinary16(n))
-
 
             elif self.fun(inst) == "sub":
                 n = binToDec(self.reg.get(self.regist(inst[10: 13]))) - binToDec(self.reg.get(self.regist(inst[13: 16])))
