@@ -1,3 +1,5 @@
+import re
+
 opcode = {
     "add": ("00000", "A"),
     "sub": ("00001", "A"),
@@ -42,8 +44,24 @@ def decToBinary(n):
 
 def assemblyCode(inst, labels, varIdx):
     if inst[-1] == "FLAGS" and inst[-3] != "mov":
-        print("illegal use of FLAGS")
-        exit()
+        print("Illegal use of FLAGS")
+        exit()    
+
+    if inst[0][0:-1] in labels:
+        if len(inst) < 2:
+            print("Wrong Syntax")
+            exit()
+        try:
+            b = inst[1] in opcode
+        except:
+            print("Wrong Syntax")
+            exit()      
+
+    if inst[0] in opcode or inst[0] == "mov":
+        if inst[0] != "hlt":
+            if len(inst) < 2:
+                print("Wrong Syntax")
+                exit()
 
     i = 0
     if inst[0] != "hlt" and (inst[1] in opcode):
@@ -79,6 +97,10 @@ def assemblyCode(inst, labels, varIdx):
             print("Wrong Syntax")
             exit()
         
+        if inst[i+1] == "FLAGS":
+            print("Illegal use of FLAGS")
+            exit()
+
         for j in range(1, 2):
             if inst[i + j] not in register:
                 print("Invalid register")
@@ -99,7 +121,11 @@ def assemblyCode(inst, labels, varIdx):
             if inst[i + j] not in register:
                 print("Invalid register")
                 exit()
-                
+
+        if inst[i+1] == "FLAGS":
+            print("Illegal use of FLAGS")
+            exit()
+        
         return op + "0" * 5 + register[inst[i + 1]] + register[inst[i + 2]]
 
     elif type == "D":
@@ -162,6 +188,14 @@ def main():
             if len(st) == 0:
                 break
             elif st[0] == "var":
+                if len(st) != 2:
+                    print("Wrong Syntax")
+                    exit()
+                a = bool(re.match("^[A-Za-z0-9_]*$",st[1])) 
+                if a == False:
+                    print("Invalid variable name")
+                    exit()
+
                 if len(allInsts) == 0:
                     if st in varInsts:
                         print("same variable used again")
@@ -178,7 +212,11 @@ def main():
                 allInsts.append(st)
         except EOFError:
             break       
-
+    
+    if len(allInsts) == 0:
+        print("Blank line in the beginning of the code")
+        exit()
+    
     for i in range(len(allInsts)):
         if allInsts[i][0] == "mov":
             continue
@@ -186,7 +224,7 @@ def main():
             if allInsts[i][0][-1] == ":":
                 labels[allInsts[i][0][0:-1]] = i
             else:
-                print("wrong syntax")
+                print("Wrong Syntax")
                 exit()
 
     j = len(allInsts)
@@ -205,6 +243,12 @@ def main():
 
     for line in allInsts:
         answer.append(assemblyCode(line, labels, varIdx))
+    
+    for line in labels:
+        a = bool(re.match("^[A-Za-z0-9_]*$", line)) 
+        if a == False:
+            print("Invalid label name")
+            exit()
 
     for i in answer:
         print(i)

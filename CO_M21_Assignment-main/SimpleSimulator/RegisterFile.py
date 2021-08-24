@@ -26,7 +26,7 @@ class RegisterFile:
             self.registerValues["FLAGS"] = a
 
         elif n1 > n2:
-            a = a[0:-2] + "1" + a[-1]
+            a = a[0:-2] + "1" + a[-1:]
             self.registerValues["FLAGS"] = a
 
         elif n1 < n2:
@@ -35,7 +35,7 @@ class RegisterFile:
 
     def setOverFlow(self):
         a = self.registerValues["FLAGS"]
-        a = a[0:-3] + "1" + a[-2]
+        a = a[0:-4] + "1" + a[-3:]
         self.registerValues["FLAGS"] = a
 
     def dump(self):

@@ -49,7 +49,10 @@ def binToDec(num):
 def decToBinary16(n):
     s = bin(int(n))
     s = s[2::]
-    s = "0" * (16 - len(s)) + s
+    if len(s) > 16:
+        s = s[-16:]
+    else:
+        s = "0" * (16 - len(s)) + s
     return s
 
 def decToBinary8(n):
@@ -99,7 +102,6 @@ class ExecutionEngine:
             if self.fun(inst) == "add":
                 n = binToDec(self.reg.get(self.regist(inst[10: 13]))) + binToDec(self.reg.get(self.regist(inst[13: 16])))
                 if n > 65535:
-                    n = 0
                     self.reg.setOverFlow()
                 else:
                     self.reg.set("FLAGS", "0"*16)
@@ -117,26 +119,25 @@ class ExecutionEngine:
             elif self.fun(inst) == "mul":
                 n = binToDec(self.reg.get(self.regist(inst[10: 13]))) * binToDec(self.reg.get(self.regist(inst[13: 16])))
                 if n > 65535:
-                    n = 0
                     self.reg.setOverFlow()
                 else:
                     self.reg.set("FLAGS", "0" * 16)
-                self.reg.set(self.reg(inst[7: 10]), decToBinary16(n))
+                self.reg.set(self.regist(inst[7: 10]), decToBinary16(n))
 
             elif self.fun(inst) == "xor":
                 n = binToDec(self.reg.get(self.regist(inst[10: 13])) ^ binToDec(self.reg.get(self.regist(inst[13: 16]))))
-                self.reg.set(self.reg(inst[7: 10]), decToBinary16(n))
+                self.reg.set(self.regist(inst[7: 10]), decToBinary16(n))
                 self.reg.set("FLAGS", "0" * 16)
 
             elif self.fun(inst) == "or":
                 n = binToDec(self.reg.get(self.regist(inst[10: 13])) | binToDec(self.reg.get(self.regist(inst[13: 16]))))
-                self.reg.set(self.reg(inst[7: 10]), decToBinary16(n))
+                self.reg.set(self.regist(inst[7: 10]), decToBinary16(n))
                 self.reg.set("FLAGS", "0" * 16)
 
             elif self.fun(inst) == "and":
                 self.reg.set("FLAGS", "0" * 16)
-                n = binToDec(self.reg.get(self.regist(inst[10: 13])) & binToDec(self.reg.get(self.regist(inst[13: 16]))))
-                self.reg.set(self.reg(inst[7: 10]), decToBinary16(n))
+                n = binToDec(self.reg.get(self.regist(inst[10: 13]))) & binToDec(self.reg.get(self.regist(inst[13: 16])))
+                self.reg.set(self.regist(inst[7: 10]), decToBinary16(n))
 
         elif self.type(inst) == "B":
             if self.fun(inst) == "movi":
@@ -212,6 +213,7 @@ class ExecutionEngine:
                 self.reg.set("FLAGS", "0" * 16)
 
         elif self.type(inst) == "F":
+            self.reg.set("FLAGS", "0" * 16)
             halted = True
 
         if self.fun(inst) == "hlt":
