@@ -47,7 +47,7 @@ def binToDec(num):
 
 
 def decToBinary16(n):
-    s = bin(n)
+    s = bin(int(n))
     s = s[2::]
     s = "0" * (16 - len(s)) + s
     return s
@@ -145,15 +145,15 @@ class ExecutionEngine:
 
             elif self.fun(inst) == "rs":
                 self.reg.set("FLAGS", "0" * 16)
-                n = self.reg.get(self.regist(inst[5: 8])) >> decToBinary16(inst[8: 16])
+                n = binToDec(self.reg.get(self.regist(inst[5: 8]))) >> binToDec(inst[8: 16])
 
-                self.reg.set(self.reg(inst[5: 8]),  "0"*8 + decToBinary16(n))
+                self.reg.set(self.regist(inst[5: 8]),  decToBinary16(n))
 
             elif self.fun(inst) == "ls":
                 self.reg.set("FLAGS", "0" * 16)
-                n = self.reg.get(self.regist(inst[5: 8])) << decToBinary16(inst[8: 16])
+                n = binToDec(self.reg.get(self.regist(inst[5: 8]))) << binToDec(inst[8: 16])
 
-                self.reg.set(self.reg(inst[5: 8]), "0"*8 + decToBinary16(n))
+                self.reg.set(self.regist(inst[5: 8]), decToBinary16(n))
 
         elif self.type(inst) == "C":
             if self.fun(inst) == "movr":
