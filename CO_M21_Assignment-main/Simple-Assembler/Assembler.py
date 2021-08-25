@@ -42,25 +42,25 @@ def decToBinary(n):
     return s
 
 
-def assemblyCode(inst, labels, varIdx):
+def assemblyCode(inst, labels, varIdx, p):
     if inst[-1] == "FLAGS" and inst[-3] != "mov":
-        print("Illegal use of FLAGS")
+        print("Illegal use of FLAGS at line " + p)
         exit()    
 
     if inst[0][0:-1] in labels:
         if len(inst) < 2:
-            print("Wrong Syntax")
+            print("Wrong Syntax at line " + p)
             exit()
         try:
             b = inst[1] in opcode
         except:
-            print("Wrong Syntax")
+            print("Wrong Syntax at line " + p)
             exit()      
 
     if inst[0] in opcode or inst[0] == "mov":
         if inst[0] != "hlt":
             if len(inst) < 2:
-                print("Wrong Syntax")
+                print("Wrong Syntax at line " + p)
                 exit()
 
     i = 0
@@ -75,7 +75,7 @@ def assemblyCode(inst, labels, varIdx):
             inst[i] = "movi"
 
     if (inst[i] not in opcode):
-        print("invalid instruction name")
+        print("invalid instruction name at line " + p)
         exit()
 
     type = opcode[inst[i]][1]
@@ -83,85 +83,85 @@ def assemblyCode(inst, labels, varIdx):
 
     if type == "A":
         if len(inst) != i + 4:
-            print("Wrong Syntax")
+            print("Wrong Syntax at line " + p)
             exit()
         
         for j in range(1, 4):
             if inst[i + j] not in register:
-                print("Invalid register")
+                print("Invalid register at line " + p)
                 exit()
         return op + "0" * 2 + register[inst[i + 1]] + register[inst[i + 2]] + register[inst[i + 3]]
 
     elif type == "B":
         if len(inst) != i + 3:
-            print("Wrong Syntax")
+            print("Wrong Syntax at line " + p)
             exit()
         
         if inst[i+1] == "FLAGS":
-            print("Illegal use of FLAGS")
+            print("Illegal use of FLAGS at line " + p)
             exit()
 
         for j in range(1, 2):
             if inst[i + j] not in register:
-                print("Invalid register")
+                print("Invalid register at line " + p)
                 exit()
                 
         if 255 < int(inst[i + 2][1::]) < 0:
-            print("Invalid immediate value")
+            print("Invalid immediate value at line " + p)
             exit()
             
         return op + register[inst[i + 1]] + decToBinary(int(inst[i + 2][1::]))
 
     elif type == "C":
         if len(inst) != i + 3:
-            print("Wrong Syntax")
+            print("Wrong Syntax at line " + p)
             exit()
         
         for j in range(1, 3):
             if inst[i + j] not in register:
-                print("Invalid register")
+                print("Invalid register at line " + p)
                 exit()
 
         if inst[i+1] == "FLAGS":
-            print("Illegal use of FLAGS")
+            print("Illegal use of FLAGS at line " + p)
             exit()
         
         return op + "0" * 5 + register[inst[i + 1]] + register[inst[i + 2]]
 
     elif type == "D":
         if len(inst) != i + 3:
-            print("Wrong Syntax")
+            print("Wrong Syntax at line " + p)
             exit()
         
         for j in range(1, 2):
             if inst[i + j] not in register:
-                print("Invalid register")
+                print("Invalid register at line " + p)
                 exit()
                 
         if inst[i + 2] in labels:
-            print("Misuse of label as variable")
+            print("Misuse of label as variable at line " + p)
             exit()
         if inst[i + 2] not in varIdx:
-            print("Use of undefined variable")
+            print("Use of undefined variable at line " + p)
             exit()
         return op + register[inst[i + 1]] + decToBinary(int(varIdx[inst[i + 2]]))
 
     elif type == "E":
         if len(inst) != i + 2:
-            print("Wrong Syntax")
+            print("Wrong Syntax at line " + p)
             exit()
         
         if inst[i + 1] in varIdx:
-            print("Misuse of variable as label")
+            print("Misuse of variable as label at line " + p)
             exit()
         if inst[i + 1] not in labels:
-            print("Use of undefined label")
+            print("Use of undefined label at line " + p)
             exit()
         return op + "0" * 3 + decToBinary(int(labels[inst[i + 1]]))
 
     elif type == "F":
         if len(inst) != i + 1:
-            print("Wrong Syntax")
+            print("Wrong Syntax at line " + p)
             exit()
         
         return op + "0" * 11
@@ -181,7 +181,7 @@ def main():
     varIdx = {}
     # storing all the answers
     answer = []  
-
+    p = 1
     while True:
         try:
             st = input().strip().split()
@@ -189,22 +189,28 @@ def main():
                 break
             elif st[0] == "var":
                 if len(st) != 2:
-                    print("Wrong Syntax")
+                    print("Wrong Syntax at line " + str(p))
                     exit()
                 a = bool(re.match("^[A-Za-z0-9_]*$",st[1])) 
                 if a == False:
-                    print("Invalid variable name")
+                    print("Invalid variable name at line " + str(p))
                     exit()
 
                 if len(allInsts) == 0:
                     if st in varInsts:
-                        print("same variable used again")
+                        print("same variable used again at line " + str(p))
                         exit()
-                        
+                    elif st[1] in opcode:
+                        print("Invalid variable name at line " + str(p))
+                        exit()
+                    elif st[1] == "var":
+                        print("Invalid variable name at line " + str(p))
+                        exit()     
                     else:    
                         varInsts.append(st)
+                        p += 1
                 else:
-                    print("Declare variable first")
+                    print("Declare variable first at line " + str(p))
                     exit()
                 
             # adding instructions
@@ -214,17 +220,25 @@ def main():
             break       
     
     if len(allInsts) == 0:
-        print("Blank line in the beginning of the code")
+        print("Blank line in the beginning of the code in line 1")
         exit()
-    
+
+    p = len(varInsts) + 1
     for i in range(len(allInsts)):
         if allInsts[i][0] == "mov":
             continue
         if allInsts[i][0] not in opcode:
             if allInsts[i][0][-1] == ":":
-                labels[allInsts[i][0][0:-1]] = i
+                if allInsts[i][0][0:-1] in opcode:
+                    print("Invalid label name at line " + str(i + 1 + len(varInsts)))
+                    exit()
+                elif bool(re.match("^[A-Za-z0-9_]*$", allInsts[i][0][0:-1])) == False:    
+                    print("Invalid label name at line " + str(i + 1 + len(varInsts)))
+                    exit()
+                else:
+                    labels[allInsts[i][0][0:-1]] = i
             else:
-                print("Wrong Syntax")
+                print("Wrong Syntax at line " + str(i + 1 + len(varInsts)))
                 exit()
 
     j = len(allInsts)
@@ -234,21 +248,17 @@ def main():
 
     for i in range (len(allInsts)-1):
         if allInsts[i][0] == "hlt":
-            print("hlt not being used as the last instruction")
+            print("hlt not being used as the last instruction at line " + str(i + 1 + len(varInsts)))
             exit()
 
     if allInsts[-1][0] != "hlt" and (allInsts[-1][1] != "hlt" and allInsts[-1][0][0:-1] in labels):
-        print("missing hlt instruction in the end")
+        print("missing hlt instruction in the end at line " + str(len(allInsts) + len(varInsts)))
         exit()
 
+    p = 1 + len(varInsts)
     for line in allInsts:
-        answer.append(assemblyCode(line, labels, varIdx))
-    
-    for line in labels:
-        a = bool(re.match("^[A-Za-z0-9_]*$", line)) 
-        if a == False:
-            print("Invalid label name")
-            exit()
+        answer.append(assemblyCode(line, labels, varIdx, str(p)))
+        p += 1
 
     for i in answer:
         print(i)
