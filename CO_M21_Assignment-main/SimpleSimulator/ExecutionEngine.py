@@ -125,12 +125,12 @@ class ExecutionEngine:
                 self.reg.set(self.regist(inst[7: 10]), decToBinary16(n))
 
             elif self.fun(inst) == "xor":
-                n = binToDec(self.reg.get(self.regist(inst[10: 13])) ^ binToDec(self.reg.get(self.regist(inst[13: 16]))))
+                n = binToDec(self.reg.get(self.regist(inst[10: 13]))) ^ binToDec(self.reg.get(self.regist(inst[13: 16])))
                 self.reg.set(self.regist(inst[7: 10]), decToBinary16(n))
                 self.reg.set("FLAGS", "0" * 16)
 
             elif self.fun(inst) == "or":
-                n = binToDec(self.reg.get(self.regist(inst[10: 13])) | binToDec(self.reg.get(self.regist(inst[13: 16]))))
+                n = binToDec(self.reg.get(self.regist(inst[10: 13]))) | binToDec(self.reg.get(self.regist(inst[13: 16])))
                 self.reg.set(self.regist(inst[7: 10]), decToBinary16(n))
                 self.reg.set("FLAGS", "0" * 16)
 
@@ -147,13 +147,17 @@ class ExecutionEngine:
             elif self.fun(inst) == "rs":
                 self.reg.set("FLAGS", "0" * 16)
                 n = binToDec(self.reg.get(self.regist(inst[5: 8]))) >> binToDec(inst[8: 16])
-
+                # n = self.reg.get(self.regist(inst[5: 8]))
+                # shifter = binToDec(inst[8: 16])
+                # n = "0"*shifter+n[0:-1*(shifter)]
                 self.reg.set(self.regist(inst[5: 8]),  decToBinary16(n))
 
             elif self.fun(inst) == "ls":
                 self.reg.set("FLAGS", "0" * 16)
                 n = binToDec(self.reg.get(self.regist(inst[5: 8]))) << binToDec(inst[8: 16])
-
+                # n = self.reg.get(self.regist(inst[5: 8]))
+                # shifter = binToDec(inst[8: 16])
+                # n = n[shifter::]+"0"*shifter
                 self.reg.set(self.regist(inst[5: 8]), decToBinary16(n))
 
         elif self.type(inst) == "C":
@@ -163,8 +167,11 @@ class ExecutionEngine:
 
             elif self.fun(inst) == "not":
                 self.reg.set("FLAGS", "0" * 16)
-                n = ~ self.reg.get(self.regist(inst[13: 16]))
-                self.reg.set(self.reg(inst[10: 13]), decToBinary16(n))
+                n = self.reg.get(self.regist(inst[13: 16]))
+                n = n.replace("0", ".")
+                n = n.replace("1", "0")
+                n = n.replace(".", "1")
+                self.reg.set(self.regist(inst[10: 13]), n)
 
             elif self.fun(inst) == "cmp":
                 n1 = self.reg.get(self.regist(inst[10: 13]))
@@ -173,8 +180,8 @@ class ExecutionEngine:
 
             elif self.fun(inst) == "div":
                 self.reg.set("FLAGS", "0" * 16)
-                quotient = self.reg.get(self.regist(inst[10: 13])) // self.reg.get(self.regist(inst[13: 16]))
-                remainder = self.reg.get(self.regist(inst[10: 13])) % self.reg.get(self.regist(inst[13: 16]))
+                quotient = binToDec(self.reg.get(self.regist(inst[10: 13]))) // binToDec(self.reg.get(self.regist(inst[13: 16])))
+                remainder = binToDec(self.reg.get(self.regist(inst[10: 13]))) % binToDec(self.reg.get(self.regist(inst[13: 16])))
 
                 self.reg.set("R0", decToBinary16(quotient))
                 self.reg.set("R1", decToBinary16(remainder))
@@ -182,15 +189,16 @@ class ExecutionEngine:
         elif self.type(inst) == "D":
             if self.fun(inst) == "ld":
                 self.reg.set("FLAGS", "0" * 16)
-                n = self.memory.get(inst[8: 16])
+                n = self.memory.get(inst[8: 16], cycle)
                 plotlist.plot_list.append([cycle,int(binToDec(inst[8: 16]))])
-                self.reg.set(self.reg(inst[5: 8]), decToBinary16(n))
+                self.reg.set(self.regist(inst[5: 8]), decToBinary16(n))
 
             elif self.fun(inst) == "st":
                 self.reg.set("FLAGS", "0" * 16)
                 n = self.reg.get(self.regist(inst[5: 8]))
+                i = binToDec(inst[8: 16])
                 plotlist.plot_list.append([cycle,int(binToDec(inst[8: 16]))])
-                self.memory.set(n)
+                self.memory.setI(n, i)
 
         elif self.type(inst) == "E":
             if self.fun(inst) == "jmp":

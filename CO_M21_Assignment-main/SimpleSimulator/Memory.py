@@ -44,6 +44,10 @@ class Memory:
         self.mem[self.current] = val
         self.current += 1
 
+    def setI(self, val, index):
+        self.mem[index] = val
+        
+
     def dump(self):
         for k in self.mem:
             print(k)

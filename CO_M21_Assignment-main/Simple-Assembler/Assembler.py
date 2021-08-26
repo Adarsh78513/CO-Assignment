@@ -30,7 +30,7 @@ register = {
     "R3": "011",
     "R4": "100",
     "R5": "101",
-    "R6": " 110",
+    "R6": "110",
     "FLAGS": "111"
 }
 
@@ -64,7 +64,7 @@ def assemblyCode(inst, labels, varIdx, p):
                 exit()
 
     i = 0
-    if inst[0] != "hlt" and (inst[1] in opcode):
+    if inst[0] != "hlt" and ((inst[1] in opcode) or (inst[1] == "mov")):
         i += 1
 
     # For deciding if it is immediate move or register move
@@ -186,8 +186,8 @@ def main():
         try:
             st = input().strip().split()
             if len(st) == 0:
-                break
-            elif st[0] == "var":
+                continue
+            if st[0] == "var":
                 if len(st) != 2:
                     print("Wrong Syntax at line " + str(p))
                     exit()
