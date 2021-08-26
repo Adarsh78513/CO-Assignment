@@ -40,13 +40,8 @@ class Memory:
     def get(self, index, cycle):
         return self.mem[binToDec(str(index))]
 
-    def set(self, val):
-        self.mem[self.current] = val
-        self.current += 1
-
     def setI(self, val, index):
-        self.mem[index] = val
-        
+        self.mem[index] = val        
 
     def dump(self):
         for k in self.mem:

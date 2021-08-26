@@ -146,19 +146,18 @@ class ExecutionEngine:
 
             elif self.fun(inst) == "rs":
                 self.reg.set("FLAGS", "0" * 16)
-                n = binToDec(self.reg.get(self.regist(inst[5: 8]))) >> binToDec(inst[8: 16])
-                # n = self.reg.get(self.regist(inst[5: 8]))
-                # shifter = binToDec(inst[8: 16])
-                # n = "0"*shifter+n[0:-1*(shifter)]
-                self.reg.set(self.regist(inst[5: 8]),  decToBinary16(n))
+                n = self.reg.get(self.regist(inst[5: 8]))
+                shifter = binToDec(inst[8: 16])
+                a = n[0:-1*(shifter)]
+                n = "0"*shifter + a
+                self.reg.set(self.regist(inst[5: 8]),  n)
 
             elif self.fun(inst) == "ls":
                 self.reg.set("FLAGS", "0" * 16)
-                n = binToDec(self.reg.get(self.regist(inst[5: 8]))) << binToDec(inst[8: 16])
-                # n = self.reg.get(self.regist(inst[5: 8]))
-                # shifter = binToDec(inst[8: 16])
-                # n = n[shifter::]+"0"*shifter
-                self.reg.set(self.regist(inst[5: 8]), decToBinary16(n))
+                n = self.reg.get(self.regist(inst[5: 8]))
+                shifter = binToDec(inst[8: 16])
+                n = n[shifter::]+"0"*shifter
+                self.reg.set(self.regist(inst[5: 8]), n)
 
         elif self.type(inst) == "C":
             if self.fun(inst) == "movr":
@@ -174,6 +173,7 @@ class ExecutionEngine:
                 self.reg.set(self.regist(inst[10: 13]), n)
 
             elif self.fun(inst) == "cmp":
+                self.reg.set("FLAGS", "0" * 16)
                 n1 = self.reg.get(self.regist(inst[10: 13]))
                 n2 = self.reg.get(self.regist(inst[13: 16]))
                 self.reg.setFLAG(n1, n2)
@@ -191,7 +191,7 @@ class ExecutionEngine:
                 self.reg.set("FLAGS", "0" * 16)
                 n = self.memory.get(inst[8: 16], cycle)
                 plotlist.plot_list.append([cycle,int(binToDec(inst[8: 16]))])
-                self.reg.set(self.regist(inst[5: 8]), decToBinary16(n))
+                self.reg.set(self.regist(inst[5: 8]), n)
 
             elif self.fun(inst) == "st":
                 self.reg.set("FLAGS", "0" * 16)
